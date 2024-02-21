@@ -1,28 +1,61 @@
-@edit_routes.route('/opl/edit-product/<string:product_id>', methods=['GET', 'POST'])
-def edit_product_details(product_id):
-    print("Route accessed with method:", request.method)
-    if request.method == 'POST':
-        print("POST request received")
-        print("Form data:", request.form)
-    else:
-        print("GET request received")
-    product = Product.query.get_or_404(product_id)
-    form = EditForm(obj=product)
-    success_message = None
-    show_form = True
+{% extends 'base.html' %}
 
-    # Initialize the variables here
-    last_updated_date = None
-    formatted_last_updated_date = None
-  
-    if request.method == 'POST':
-        if form.validate_on_submit() or 'submit' in request.form:
-            # Logic for editing the product
-            form.populate_obj(product)
-            last_updated_date = datetime.now()
+{% block heading %}
+<h1 class="pf-v5-c-title pf-m-4xl">{{ product.product_name }} Details</h1>
+{% endblock %}
 
-    # Check if last_updated_date has been set, then format it
-    if last_updated_date:
-        formatted_last_updated_date = last_updated_date.strftime('%Y-%m-%d')
+{% block content %}
+{% if product %}
+<div id="product-details">
 
-    return render_template('opl/edit.html', form=form, product=product, success_message=success_message, show_form=show_form, formatted_last_updated_date=formatted_last_updated_date)
+    <!-- Product Information -->
+
+    {% if product.product_name or product_types or product.product_description or portfolios or
+    product.product_notes.first() %}
+    <fieldset class="product-information-group">
+        <legend>Product Information</legend>
+
+        {% if product.product_name %}
+        <div class="field-pair">
+            <label>Product Name</label>
+            <span>{{ product.product_name }}</span>
+        </div>
+        {% endif %}
+
+        {% if product_types %}
+        <div class="field-pair">
+            <label>Product Type</label>
+            <span>
+                {% for product_type in product_types %}
+                {{ product_type.product_type }}
+                {% endfor %}
+            </span>
+        </div>
+        {% endif %}
+
+        {% if product.product_description %}
+        <div class="field-pair">
+            <label>Product Description</label>
+            <span>{{ product.product_description }}</span>
+        </div>
+        {% endif %}
+
+        {% if portfolios %}
+        <div class="field-pair">
+            <label>Member Of</label>
+            <ul>
+                {% for portfolio in portfolios %}
+                <li>{{ portfolio.category_name }} portfolio</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        {% if product.product_notes.first() %}
+        <div class="field-pair">
+            <label>Product Notes</label>
+            <span>{{ product.product_notes.first().product_note }}</span>
+        </div>
+        {% endif %}
+    </fieldset>
+    {% endif %}
