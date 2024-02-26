@@ -1,100 +1,48 @@
-Setting up OpenShift Pipelines to view detailed vulnerability scan reports 
-The View output icon in the CI tab > Actions column is designed to provide insights into security vulnerabilities identified during the scans. When selected, the system displays a pop-up, which consists of the following sections:
-Vulnerability scan details: This section displays the scanner task name, for example, Advanced Cluster Security and offers an initial summary of the security issues.
-Scan results tabs: These tabs categorize the results into specific tasks such as Image scan, Image check, and Deployment check. The Image scan task scans container images and provides a crucial analysis of vulnerabilities within the container images. The Image check scans container images, categorizes vulnerabilities as either fixable or unavailable, and provides suggestions on overcoming the vulnerabilities. The Deployment check scans container images for deployment configurations, indenfifies security concerns within the deployment environment, and provides suggestions on overcoming the vulnerabilities.
-Other information: This section displays the results of a PipelineRun such as IMAGE_URL, `IMAGE_DIGEST`, `CHAINS-GIT_URL`, `CHAINS-GIT_COMMIT`, `SCAN_OUTPUT`, which give context and references for the vulnerabilities scan.
-Prerequisites
-You have logged in to the web console.
-You have the appropriate roles and permissions in a project to create applications and other workloads in OpenShift Container Platform.
-You have an existing vulnerability scan task.
-Procedures
+Setting up OpenShift Pipelines to deploy application to pre production environment and view Enterprise contract policies reports 
+To deploy your latest code change to pre-prod environment, you create Pipea tag in Github or GitLab which triggers a deploy-focuseed Tekton pipeline, which updates the GitOps repository causing ArgoCD to deploy. When you create a tag, it automatically triggers a Pipeline Run which you can review in the CI tab. This Pipeline Run has a task called verify-enterprise-contract that compares your application against a set of enterprise contract policies to verify if it meets them before moving your application to pre-products. It displays the scan resultsin the  View output icon in the CI tab > Actions column is designed to provide insights into security vulnerabilities identified during the scans.
+An application’s build process uses Tekton Chains to produce a signed in-toto attestation of the build pipeline. The Enterprise Contract then uses this attestation to verify the build’s integrity and compliance with a set of policies. These policies include best practices and any organization-specific requirements.
+
+
+The main goal of the enterprise contract (EC) is to prevent the release of artifacts that are not compliant with the Supply chain Levels for Software Artifacts (SLSA) security framework. Organizations can implement their policies by expressing them as criteria for valid artifacts within the EC. Developers then access the EC as an object inside the workspace. As a developer, reference the EC to verify what must be true about your build and how to make your artifacts compliant with your organization’s needs and policies. The EC evaluates the policy definitions against the collected provenance data, ensuring that the build process complies with the enterprise policy. Some examples of the EC policy rules include the following use cases:
+Verify the execution of a set of Tekton Tasks. For example, the EC can assert that a certain Tekton Task, which performs anti-virus checks, ran successfully.
+Verify that all used Tekton Tasks match an expected version and origin.
+Verify that an expected signature key properly signed built artifacts.
+
+
+.Procedures
 In the Developer or Administrator perspective, switch to the relevant project where you want a visual representation of SBOMs.
-Update your existing vulnerability scan task with annotations for image scanning, image checking, and deployment checking. For example, when using ACS scanning tool, you can specify annotations for acs-image-scan in the following format:
+Update your existing scan task with annotations in the following format:
 
 
-...
+apiVersion: tekton.dev/v1
+kind: Task
 metadata:
- name: acs-image-scan <1>
+ name: enterprise-contract-task <1>
  annotations:
-    task.results.format: application/json
-    task.results.type: roxctl-image-scan <2>
-    task.results.key: SCAN_OUTPUT
+    task.results.format: application/json <2>
+    task.results.type: ec <3>
     task.output.location: logs
-    task.results.container: step-report
+    task.results.container: step-report-json <4>
 spec: …
       steps:
-        - name: report
-          image: 'quay.io/lrangine/crda-maven:11.0' <3>
-          script: |
-              #!/bin/sh
-              cat $(workspaces.reports.path)/image-scan
-<1> Task name. For example, acs-image-scan, acs-image-check, acs-deployment-check
-<2> Type of scan tool. For example, roxctl-image-scan, roxctl-image-check, roxctl-deployment-check.
-<3> The URL of the image to scan.
+        - name: report-json
+          image: quay.io/enterprise-contract/ec-cli:snapshot@sha256:33be4031a3316a46db3559a4d8566bc22f9d4d491d262d699614f32f35b45b67 <5>
+          command: [cat]
+          args:
+            - "$(params.HOMEDIR)/report-json.json"
+<1> Task name. For example, enterprise-contract-task
+<2> The supported result format
+<3> Type of scan tool. For example, ec.
+<4> The name of the container to get the POD logs.
+<5> The URL of the image to scan.
 
 
-3. Repeat Step 2 for acs-image-check and `acs-deployment-check` with appropriate modifications. 
-4. Rerun the affected OpenShift Pipeline.
 .Verification
-Select the Pipeline Run > CI tab > Actions column > View output icon and review the detailed vulnerabilities detected in the software components.
+Go to Catlog and select the component that you want to move to pre-production environment.
+On the Overview tab, select View Source. The system, in a new tab, displays your source repository which can either be in GitHub or GitLab. 
+If your repository is on GitLab, go to Reposiroty > Tags and select Create tag.
+In the Tag name field, enter v.1 and select Create tag.
+Alternatively, if your repository is on GitHub, go to
+On the CI tab, review the pipeline run.
 
-
-Navigating the Vulnerability Report
-The image scan, image check, and deployment check tasks in the Advanced Culster Security (ACS) provides a crucial analysis of vulnerabilities within the container images. 
-To view the scan task report:
-In the OpenShift Pipeline interface, select the Pipeline Run you wish to analyze.
-Click the "CI" tab and locate the "View Output" icon in the Actions column.
-Select the "Image Scan" tab in the pop-up window that appears.
-
-
-Understanding the Report Contents
-The Image Scan report is divided into several key areas:
-CVEs by Severity: This area categorizes the Common Vulnerabilities and Exposures (CVEs) found in the image by their severity levels—Critical, Important, and Low. Critical vulnerabilities demand immediate attention, while lower-severity issues may be prioritized accordingly.
-CVEs by Status: It provides a split view of vulnerabilities with available fixes and those without, enabling you to quickly understand which issues can be readily addressed.
-Total Scan Results: This gives a summary of the scan, including the total number of vulnerabilities and components analyzed.
-
-
-Detailed Vulnerability Information
-Each entry in the image scan report includes:
-CVE ID: A unique identifier for the vulnerability. Clicking on the CVE ID link will redirect to an external database for in-depth information.
-Severity: The assigned severity level based on the potential impact of the vulnerability.
-Component: The software component where the vulnerability was found.
-Component Version: The version of the component that was scanned.
-Fixed in Version: If available, the version in which the vulnerability has been addressed is listed.
-
-
-Each entry in the image check and deployment check report includes:
-Name: Indicates the identifier for the vulnerability or check.
-Severity: Indicates the assigned risk level.
-Break build: Indicates if the build was halted.
-Description: Indicates the nature of vulnerability.
-Violation:  Indicates the policy or standard the pipeline run breached.
-Remediation: Indicates the steps to resolve the issue.
-
-
-Using Filters
-For the image scan task, you can filter the report by:
-CVE ID
-Severity
-Component
-Status
-Filter by name
-
-
-For the image check task, you can filter the report by:
-Status 
-Severity
-Filter by name
-
-
-For the deployment check, you can filter the report by:
-Severity
-Filter by name
-
-
-
-
-Interpreting the Results
-Critical Vulnerabilities: These should be reviewed and addressed as a priority to minimize the risk of exploitation.
-Fixable vs. Unfixable: Focus on vulnerabilities that can be fixed with available patches. For unfixable vulnerabilities, consider workarounds or additional security measures.
-Remediation Guidance: For each listed vulnerability, assess the 'Fixed in Version' information to plan for component updates or patches.
+Select the View output icon in the Actions column. The system displays a pop-up window.
