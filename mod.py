@@ -40,23 +40,61 @@ Select the Pipeline Run > CI tab > Actions column > View output icon and review 
 
 
 Navigating the Vulnerability Report
-Interacting with CVE IDs
-Click on the CVE ID to be redirected to an external database where detailed information about the vulnerability is available.
+The image scan, image check, and deployment check tasks in the Advanced Culster Security (ACS) provides a crucial analysis of vulnerabilities within the container images. 
+To view the scan task report:
+In the OpenShift Pipeline interface, select the Pipeline Run you wish to analyze.
+Click the "CI" tab and locate the "View Output" icon in the Actions column.
+Select the "Image Scan" tab in the pop-up window that appears.
 
 
-Filtering and sorting
-The report can be filtered by component, status, and severity, helping prioritize issues for remediation.
+Understanding the Report Contents
+The Image Scan report is divided into several key areas:
+CVEs by Severity: This area categorizes the Common Vulnerabilities and Exposures (CVEs) found in the image by their severity levels—Critical, Important, and Low. Critical vulnerabilities demand immediate attention, while lower-severity issues may be prioritized accordingly.
+CVEs by Status: It provides a split view of vulnerabilities with available fixes and those without, enabling you to quickly understand which issues can be readily addressed.
+Total Scan Results: This gives a summary of the scan, including the total number of vulnerabilities and components analyzed.
 
 
-Component Analysis
-Component and versions
-Lists all the components of the application, the versions scanned, and the vulnerabilities associated with each component.
+Detailed Vulnerability Information
+Each entry in the image scan report includes:
+CVE ID: A unique identifier for the vulnerability. Clicking on the CVE ID link will redirect to an external database for in-depth information.
+Severity: The assigned severity level based on the potential impact of the vulnerability.
+Component: The software component where the vulnerability was found.
+Component Version: The version of the component that was scanned.
+Fixed in Version: If available, the version in which the vulnerability has been addressed is listed.
 
 
-Fixed in version
-Specified rge software version where each vulnerability has been resolved.
+Each entry in the image check and deployment check report includes:
+Name
+Severity
+Break build
+Description
+Violation
+Remediation
 
 
-Utilizing the SCAN reults
-If you have used the 
-Resolving vulnerabilities
+Using Filters
+For the image scan task, you can filter the report by:
+CVE ID
+Severity
+Component
+Status
+Filter by name
+
+
+For the image check task, you can filter the report by:
+Status 
+Severity
+Filter by name
+
+
+For the deployment check, you can filter the report by:
+Severity
+Filter by name
+
+
+
+
+Interpreting the Results
+Critical Vulnerabilities: These should be reviewed and addressed as a priority to minimize the risk of exploitation.
+Fixable vs. Unfixable: Focus on vulnerabilities that can be fixed with available patches. For unfixable vulnerabilities, consider workarounds or additional security measures.
+Remediation Guidance: For each listed vulnerability, assess the 'Fixed in Version' information to plan for component updates or patches.
