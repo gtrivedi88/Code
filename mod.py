@@ -1,75 +1,40 @@
 Setting up OpenShift Pipelines to view detailed vulnerability scan reports 
-The View output icon in the CI tab > Actions column provides detailed information about the security vulnerabilities identified during the scan. It consists of the following sections:
-Vulnerability scan details: Display the name of the scanner task used, for example, Advanced Cluster Security and offers a snapshot of the identified security issues.
-Different tabs for different task results, for example, Image Scan, Image Check, and Deployment Check.
-Others:
+The View output icon in the CI tab > Actions column is designed to provide insights into security vulnerabilities identified during the scans. The details can be accessed through a pop-up that appears upon interaction with this icon. It consists of the following sections:
+Vulnerability scan details: This section includes the scanner task name, for example, Advanced Cluster Security and offers an initial summary of the security issues.
+Scan results tabs: These tabs categorize the results into specific tasks such as Image scan, Image check, and Deployment check. The `image-check` scans container images and categorizes vulnerabilities as either fixable or unavailable. The `deployment-check` scans container images for deployment configurations and indenfifies security concerns within the deployment environment.
+Other information: This section displays the results of a PipelineRun such as IMAGE_URL, `IMAGE_DIGEST`, `CHAINS-GIT_URL`, `CHAINS-GIT_COMMIT`, `SCAN_OUTPUT`, which give context and references for the vulnerabilities scan.
 Prerequisites
 You have logged in to the web console.
 You have the appropriate roles and permissions in a project to create applications and other workloads in OpenShift Container Platform.
 You have an existing vulnerability scan task.
 Procedures
 In the Developer or Administrator perspective, switch to the relevant project where you want a visual representation of SBOMs.
-Update your existing vulnerability scan task to add the `image-scan`, task annotations in the following format:
+Update your existing vulnerability scan task to include annotations for image scanning, image checking, and deployment checking. For example, when using ACS scanning tool, you can specify annotations for acs-image-scan in the following format:
 
 
 ...
 metadata:
- name: acs-image-scan
+ name: acs-image-scan <1>
  annotations:
     task.results.format: application/json
-    task.results.type: roxctl-image-scan
+    task.results.type: roxctl-image-scan <2>
     task.results.key: SCAN_OUTPUT
     task.output.location: logs
     task.results.container: step-report
 spec: …
       steps:
         - name: report
-          image: 'quay.io/lrangine/crda-maven:11.0'
+          image: 'quay.io/lrangine/crda-maven:11.0' <3>
           script: |
               #!/bin/sh
               cat $(workspaces.reports.path)/image-scan
+<1> Task name. For example, acs-image-scan, acs-image-check, acs-deployment-check
+<2> Type of scan tool. For example, roxctl-image-scan, roxctl-image-check, roxctl-deployment-check.
+<3> The URL of the image to scan.
 
 
-apiVersion: tekton.dev/v1
-kind: Task
-metadata:
- name: acs-image-check
- annotations:
-    task.results.format: application/json
-    task.results.type: roxctl-image-check
-    task.results.key: SCAN_OUTPUT
-    task.output.location: logs
-    task.results.container: step-report
-spec: …
-      steps:
-        - name: report
-          image: 'quay.io/lrangine/crda-maven:11.0'
-          script: |
-              #!/bin/sh
-              cat $(workspaces.reports.path)/image-check
-
-
-
-
-apiVersion: tekton.dev/v1
-kind: Task
-metadata:
- name: acs-deployment-check
- annotations:
-    task.results.format: application/json
-    task.results.type: roxctl-deployment-check
-    task.results.key: SCAN_OUTPUT
-    task.output.location: logs
-    task.results.container: step-report
-spec: …
-      steps:
-        - name: report
-          image: 'quay.io/lrangine/crda-maven:11.0'
-          script: |
-              #!/bin/sh
-              cat $(workspaces.reports.path)/deployment-check
-Note: If you need additional image checks, you can add all them in the following above format for example, image check, deployment check.
-3. Rerun the affected OpenShift Pipeline.
+3. Repeat Step 2 for acs-image-check and `acs-deployment-check` with appropriate modifications. 
+4. Rerun the affected OpenShift Pipeline.
 .Verification
 Select the Pipeline Run > CI tab > Actions column > View output icon and review the detailed vulnerabilities detected in the software components.
 
@@ -92,6 +57,6 @@ Fixed in version
 Specified rge software version where each vulnerability has been resolved.
 
 
-Actionable insights
+Utilizing the SCAN reults
 If you have used the 
 Resolving vulnerabilities
