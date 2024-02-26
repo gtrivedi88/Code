@@ -1,7 +1,7 @@
 Setting up OpenShift Pipelines to view detailed vulnerability scan reports 
-The View output icon in the CI tab > Actions column is designed to provide insights into security vulnerabilities identified during the scans. The details can be accessed through a pop-up that appears upon interaction with this icon. It consists of the following sections:
-Vulnerability scan details: This section includes the scanner task name, for example, Advanced Cluster Security and offers an initial summary of the security issues.
-Scan results tabs: These tabs categorize the results into specific tasks such as Image scan, Image check, and Deployment check. The `image-check` scans container images and categorizes vulnerabilities as either fixable or unavailable. The `deployment-check` scans container images for deployment configurations and indenfifies security concerns within the deployment environment.
+The View output icon in the CI tab > Actions column is designed to provide insights into security vulnerabilities identified during the scans. When selected, the system displays a pop-up, which consists of the following sections:
+Vulnerability scan details: This section displays the scanner task name, for example, Advanced Cluster Security and offers an initial summary of the security issues.
+Scan results tabs: These tabs categorize the results into specific tasks such as Image scan, Image check, and Deployment check. The Image scan task scans container images and provides a crucial analysis of vulnerabilities within the container images. The Image check scans container images, categorizes vulnerabilities as either fixable or unavailable, and provides suggestions on overcoming the vulnerabilities. The Deployment check scans container images for deployment configurations, indenfifies security concerns within the deployment environment, and provides suggestions on overcoming the vulnerabilities.
 Other information: This section displays the results of a PipelineRun such as IMAGE_URL, `IMAGE_DIGEST`, `CHAINS-GIT_URL`, `CHAINS-GIT_COMMIT`, `SCAN_OUTPUT`, which give context and references for the vulnerabilities scan.
 Prerequisites
 You have logged in to the web console.
@@ -9,7 +9,7 @@ You have the appropriate roles and permissions in a project to create applicatio
 You have an existing vulnerability scan task.
 Procedures
 In the Developer or Administrator perspective, switch to the relevant project where you want a visual representation of SBOMs.
-Update your existing vulnerability scan task to include annotations for image scanning, image checking, and deployment checking. For example, when using ACS scanning tool, you can specify annotations for acs-image-scan in the following format:
+Update your existing vulnerability scan task with annotations for image scanning, image checking, and deployment checking. For example, when using ACS scanning tool, you can specify annotations for acs-image-scan in the following format:
 
 
 ...
@@ -64,12 +64,12 @@ Fixed in Version: If available, the version in which the vulnerability has been 
 
 
 Each entry in the image check and deployment check report includes:
-Name
-Severity
-Break build
-Description
-Violation
-Remediation
+Name: Indicates the identifier for the vulnerability or check.
+Severity: Indicates the assigned risk level.
+Break build: Indicates if the build was halted.
+Description: Indicates the nature of vulnerability.
+Violation:  Indicates the policy or standard the pipeline run breached.
+Remediation: Indicates the steps to resolve the issue.
 
 
 Using Filters
