@@ -1,68 +1,48 @@
-Assess your security posture 
+This demonstration takes the audience on a journey across the Software Development Lifecycle (SDLC), from code, to build, through continuous deployment and finally to running in production. An end-to-end DevSecOps CI/CD demonstration of Red Hat Trusted Application Pipeline (RHTAP) incorporating Developer Hub, a developer self-service portal based on Backstage, to standardize and expedite developer onboarding with golden path templates imbued with security guardrails.
 
-bookmark_border
-Security posture is an organization's ability to detect, respond to, and remediate threats. It includes the readiness of an organization's people, hardware, software, policies and processes across the entire software lifecycle.
+RHTAP = RHDH (developer self-service) + RHTAS (signature, attestation) + RHTPA (SBOM)
 
-There are a number of frameworks and tools that you can use to assess your security posture and identify ways to mitigate threats.
+Featured products in this demonstration include:
 
-Software delivery practices
-A strong security posture requires a strong foundation in software delivery best practices, and these practices go beyond implementing tools and technical controls. For example, if change approval process is unclear, then it is easier for unwanted changes to enter your software supply chain. If teams are discouraged from raising issues, they might hesitate to report security concerns.
+Red Hat Trusted Application Pipeline
 
-DevOps Research and Assessment (DORA) performs independent research into practices and capabilities of high performance technology teams. To assess your team's performance and learn about ways to improve, use the following DORA resources:
+Red Hat Developer Hub
 
-Take the DORA DevOps Quick Check to get some quick feedback on how your organization compares with others.
-Read about the technical, process, measurement, and cultural DevOps capabilities identified by DORA.
-Frameworks for security posture
-The NIST Secure Software Development Framework (SSDF) and Cybersecurity Assessment Framework (CAF) are frameworks developed by governments to help organizations assess their security posture and mitigate supply chain threats. These frameworks take into consideration the software development lifecycle as well as other aspects related to software security such as incident response plans. The complexity and scope of these frameworks can require a substantial investment in time and resources.
+Red Hat Trusted Artifact Signer
 
-Supply chain Levels for Software Artifacts (SLSA) is a framework that aims to make assessment and mitigation implementation more approachable and incremental. It explains supply chain threats and associated mitigations and provides examples of tools to implement mitigations. It also groups requirements for strengthening your security posture in levels, so that you can prioritize and incrementally implement changes. SLSA is primarily focused on the software delivery pipeline, so you should use it together with other assessment tools like the SSDF and CAF.
+Red Hat Trusted Profile Analyzer
 
-SLSA is inspired by Google's internal Binary Authorization for Borg a mandatory enforcement check for all of Google's production workloads.
+Red Hat Advanced Cluster Security
 
-Software Delivery Shield is a fully-managed software supply chain security solution on Google Cloud that incorporates best practices in SLSA. You can view insights about your security posture, including the SLSA level of your builds.
+Red Hat OpenShift Pipelines (Tekton)
 
-Artifact and dependency management
-Visibility into vulnerabilities in your software lets you proactively respond and remediate potential threats before you release your applications to your customers. You can use the following tools to get more visibility into vulnerabilities.
+Red Hat OpenShift GitOps (ArgoCD)
 
-Vulnerability scanning
-Vulnerability scanning services such as Artifact Analysis help you to identify known vulnerabilities in your software.
-Dependency management
-Open Source Insights is a centralized source for information about dependency graphs, known vulnerabilities, and licenses associated with open source software. Use the site to learn about your dependencies.
+Red Hat Quay
 
-The Open Source Insights project also makes this data available as an Google Cloud Dataset. You can use BigQuery to explore and analyze the data.
+Red Hat OpenShift Dev Spaces
 
-Source control policy
-Scorecards is an automated tool that identifies risky software supply chain practices in your GitHub projects.
+Red Hat OpenShift
 
-Allstar is a GitHub App that continuously monitors GitHub organizations or repositories for adherence to configured policies. For example, you can apply a policy to your GitHub organization that checks for collaborators outside the organization who have administrator or push access.
+Within a large enterprise the time required for a newly hired app developer to become productive is often measured in weeks. In this demonstration, we are going to show you how to shrink those weeks down to minutes with a developer-optimized, self-service, Internal Development Platform (IDP) that pre-integrates software supply chain security practices from the moment of project inception.
 
-To learn more about managing your dependencies, see Dependency management
+This is the story of how Red Hat imbues your software supply chain with the content, templates, signatures, attestations, and SBOMs that accelerate your custom application development across the software development lifcycle of code, build, deploy and run. This is the story of how Red Hat empowers your Platform Engineering teams who then in turn super charge your custom application developers.
 
-Team awareness about cybersecurity
-If your teams have an understanding of software supply chain threats and best practices, they can design and develop more secure applications.
+You might have heard the phrase "shift-left" as it relates to security practices. That phrase primarily focuses on the idea that security checks should not simply be executed manually (human-powered) and at the very end of the path-to-production pipeline but brought forward in time.
 
-In the State of Cybersecurity 2021, Part 2, a survey of information security professionals, survey respondants reported that cybersecurity training and awareness programs had some positive impact (46%) or strong positive impact (32%) on employee awareness.
+In this demonstration, we are going to see the ultimate of "shift-left" by introducing security checks at the point of code entry. We are also going to see "shift-down", injection of security practices from the moment of project creation, embodied by the golden path template, and fully integrated into the platform itself.
 
-The following resources can help you learn more about supply chain security and security on Google Cloud:
+Remember the ultimate goal of a well managed platform-as-a-product (PaaP) is to serve its customers, and in the case of an IDP, that means the enterprise application development teams. The IDP can best serve its customers by dramatically lowering the developer’s cognitive load, allowing app devs to focus on the code that contributes to the next business outcome.
 
-Google Cloud enterprise foundation blueprint describes setting up organization structure, authentication and authorization, resource hierarchy, networking, logging, detective controls, and more. It is one of the guides in the Google Cloud security best practices center.
-Developing Secure Software teaches foundational software development practices in the context of software supply chain security. The course focuses on best practices for designing, developing, and testing code, but also covers topics such as handling vulnerability disclosures, assurance cases, and considerations for software distribution and deployment. The Open Source Security Foundation (OpenSSF) created the training.
-Preparing for change
-After you have identified changes you want to make, you need to plan for the changes.
+In this story, we are are going to hear about 3 major new ideas:
 
-Identify best practices and mitigations to improve the reliability and security of your supply chain.
-Develop guidelines and policies to ensure that teams implement changes and measure compliance consistently. For example, your company policies might include criteria for deployment that you implement with Binary Authorization. The following resources can help you:
+Software Catalog - one URL to rule them all
 
-Minimum Viable Secure Product, a security checklist of controls to establish a baseline security posture for a product. You can use the checklist to establish your minimum security control requirements and to evaluate software by third-party vendors.
-NIST Security and Privacy Controls for Information Systems and Organizations publication (SP 800-53).
-Plan for incremental changes to reduce the size, complexity, and impact of each change. It also helps the people on your teams to adjust to each change, provide feedback, and apply lessons you've learned to the future changes.
+Documentation as Code
 
-The following resources can help you with planning and implementing change.
+Templates with golden paths that automate securing your software supply chain
 
-ROI of DevOps Transformation is a white paper that describes how to forecast the value of and justify investment in DevOps transformation.
+No tickets, no wait, let’s go
 
-The Google Cloud Application Modernization Program provides holistic, guided assessment, measuring key outcomes (speed and stability and burnout) and identifying the technical, process, and cultural capabilities that improve those outcomes for your organization. See the CAMP announcement blog post for more information about the program.
+Please contact the RHTAP product team on https://redhat.enterprise.slack.com/archives/C06D1L9N6J3 [Slack] for assistance and to provide feedback related to these materials. (Note: Please open the link in a new tab)
 
-How to transform provides guidance to help you plan for and implement changes. Fostering a culture that supports incremental, ongoing change leads to more successful change outcomes.
-
-The NIST Secure Software Delivery Framework describes software security practices based on established practices from organizations such as The Software Alliance, Open Web Application Security Project, and SAFECode. It includes a set of practices to prepare your organization as well as practices for implementing changes and responding to vulnerabilities.
