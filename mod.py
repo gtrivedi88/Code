@@ -2,15 +2,25 @@
 
 With the installation of {ProductShortName}, cluster administrators can customize the {RHDHLongName} portal, tailoring it with specific templates and enhancements. This customization enables developers to concentrate solely on coding by streamlining development processes and alleviating concerns related to pipelines, vulnerabilities, and policies.
 
-However, before any customization, cluster administrators can use this guide to explore provided samples for software and pipeline templates. This exploration is crucial for understanding how RHTAP facilitates a secure supply chain before any further customization.
+Before diving into customization, it's essential for cluster administrators to familiarize themselves with the available software and pipeline templates through this guide. Such exploration is key to grasping how {ProductShortName} supports a secure supply chain, laying the groundwork for any subsequent customization.
 
-You can use ready-to-use software templates to build and accelerate your application's path to production. These software templates are engineered to seamlessly integrate with Red Hat's extensive array of tools ({RHDHShortName}, {RHTASShortName}, and {RHTPAShortName}) and technologies, providing you with robust framework for a secure, efficient, and developer-friendly software development lifecycle (SDLC) within an on-premise environment.
+Adhering to best practices, Red Hat fortifies your software supply chain with critical elements such as templates, signatures, attestations, and SBOMs. This enrichment is designed to streamline the development process across all SDLC phases: coding, building, deploying, and running.
 
-Emulating best practices, Red Hat enriches your software supply chain with essential components - templates, signatures, attestation, and SBOMs - to expedite custom application development through all SDLC stages: code, build, deploy, and run.
+== The first step
 
-With RHTAP you can build and containerize Java, Python, Node, or Go-based applications
+* Ensure you have installed installed {ProductName}
+* You have signed to {RHDHLongName} using the link that the {ProductShortName} provides.
 
-After a pipeline run is completed you can view:
-Vulnerabilities in build artifacts.
-Software bill of materials (SBOM) for the build artifacts.
-Build provenance, which is a collection of verifiable metadata about a build. It includes details such as the digests of the built images, the input source locations, the build toolchain, build steps, and the build duration.
+
+{RHDHShortName} serves as an open developer platform designed for building developer portals. Using Developer Hub, the engineering teams can access a unified platform that streamlines the development process and provides a variety of tools and resources to build high-quality software efficiently.
+
+The goal of Developer Hub is to address the difficulties associated with creating and sustaining developer portals using:
+
+* A centralized dashboard to view all available developer tools and resources to increase productivity
+* Self-service capabilities, along with guardrails, for cloud-native application development that complies with enterprise-class best practices
+* Proper security and governance for all developers across the enterprise
+
+
+{ProductShortName} offers ready-to-use software templates in {RHDHShortName} to build and accelerate your application's path to production. These software templates are engineered to seamlessly integrate with Red Hat's extensive array of tools ({RHDHShortName}, {RHTASShortName}, and {RHTPAShortName}) and technologies, providing you with robust framework for a secure, efficient, and developer-friendly software development lifecycle (SDLC) within an on-premise environment.
+
+{ProductShortName} facilitates the building and containerization of applications developed in popular programming languages such as Java, Python, Node.js, and Go.
