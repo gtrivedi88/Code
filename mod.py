@@ -1,26 +1,16 @@
-== Access and elevate your organization’s security defense
-“Access and elevate” represents a two-phased approach to enhancing cybersecurity with in the software development lifecycle (SDLC). Initially, it involves evaluating existing security measures across all stages of development. Following this assessment, the strategy focuses on elevating these practices by implementing advanced security solutions and adopting a DevSecOps CI/CD solution to standardize developer onboarding, expedite processes, and embed security from the start.
+= Building your application with software templates
 
-Framework in RHTAP
+Once RHTAP is installed, cluster administrators can customize the RHDH portal, tailoring it with specific templates and enhancements. This customization enables developers to concentrate solely on coding by streamlining development processes and alleviating concerns related to pipelines, vulnerabilities, and policies.
 
-RHTAP one stop shop for building, testing, and deploying source code with secure CI/CD that incorporates best practices in SLSA level 3, to help you spot critical vulnerabilities.
+Our getting-started resources guide plaform engineers through the exploration of provided samples for software and pipeline templates. This exploration is crucial for understanding how RHTAP facilitates a secure supply chain before any further customization.
 
-Artifact scanning and management
+Emulating best practices, Red Hat enriches your software supply chain with essential components - templates, signatures, attestation, and SBOMs - to expedite custom application development through all SDLC stages: code, build, deploy, and run.
 
-Visibility into vulnerabilities in your software lets you proactively respond and remediate potential threats before you release your applications to your customers. RHTAP leverages RHDH (a self service developer portal), RHTAS (signature and attestations), and RHTPA to (Sofware bill of materials (SBOMs):
-Scan vulnerabilities with each pull request
-generate SBOMs
-ensure that your container image meets SLSA guidelines by using our enterprise contract with 41+ rules.
+Use ready-to-use software templates to build and accelerate your application's path to production. These software templates are engineered to seamlessly integrate with Red Hat's extensive array of tools ({RHDHShortName}, {RHTASShortName}, and {RHTPAShortName}) and technologies, providing you with robust framework for a secure, efficient, and developer-friendly software development lifecycle (SDLC) within an on-premise environment.
 
-Shift-left and shift-down security practices
-"Shift-left" and "shift-down" are strategies that emphasize the early integration of security measures within the SDLC. By introducing security checks at the code entry point and embedding security practices from the moment of project creation, organizations can ensure a more secure development process from the start.
+With RHTAP you can build and containerize Java, Python, Node, or Go-based applications
 
-
-Ready-to-use software templates
-RHTAP offers ready-to-use software templates play a pivotal role in this approach, providing pre-defined pathways that embed security practices directly into the development process. This not only streamlines workflow but also significantly lowers the cognitive load on developers, allowing them to focus more on innovation and less on security concerns.
-
-[NOTE]
-You can customize the ready-to-use software templates for as per your organization’s requirements.
-
-The Path Forward
-Adopting a DevSecOps mindset and uitlizing RHTAP fosters a secure, efficient development environment. This continuous journey of assessment and elevation prepares organizations to meet current and future cynbersecurity challenges head-on.
+After a pipeline run is completed you can view:
+Vulnerabilities in build artifacts.
+Software bill of materials (SBOM) for the build artifacts.
+Build provenance, which is a collection of verifiable metadata about a build. It includes details such as the digests of the built images, the input source locations, the build toolchain, build steps, and the build duration.
