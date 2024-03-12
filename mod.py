@@ -1,11 +1,15 @@
-== Making changes to your code
+=== Dependency analytics
 
-With access to your repository, you're ready to engage in the familiar process of working with a git repository. Here's how to proceed:
+The Dependency Analytics plugin, available for *VS Code* and JetBrains *IntelliJ*, warns you about security risks directly in your IDE. This helps you tackle potential security issues early.
 
-- **Clone** your repository to start working on it either locally or in your development environment.
-- **Modify** your application, like updating technical docs or `index.html`, or by adding new features or bug fixes.
-- **Push** your changes to apply them.
+For example, as an experienced Java developer, you might want to dive into Java code using the Quarkus framework. With the Dependency Analytics plugin installed, you're ready to move on to enhancing your code while keeping an eye on security.
 
-After making the necessary changes, commit your changes with a meaningful message and push them to the repository. This update triggers the {ProductShortName} pipeline, allowing you to witness the application's path to production and the activation of security measures.
+.Accessing vulnerability warnings and report 
+image::dependency-analytics-warning[]
 
-After pushing updates, you might want to view at the *Image Registry* tab on {RHDHShortName} to see details about how everything is set up using ArgoCD and GitOps for smooth provisioning.
+This is the Dependency Analytics IDE plug-in providing an early warning signal. Remember we said that at Red Hat we aim to help you better secure your software supply chain across your SDLC, from code, to build, through deployment and into the runtime environment. In this case, the IDE plug-in is helping the developer to head off a problem BEFORE it enters your enterprise supply chain. Red Hat will be doing more in this area to provide recommendations in the future. As you can see we are partnered with
+
+.The Dependency Analytics report
+image::dependency-analytics-warning[]
+
+Remember we said that at Red Hat we aim to help you better secure your software supply chain across your SDLC, from code, to build, through deployment and into the runtime environment. In this case, the IDE plug-in is helping the developer to head off a problem BEFORE it enters your enterprise supply chain. Red Hat will be doing more in this area to provide recommendations in the future. As you can see we are partnered with
