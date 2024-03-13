@@ -1,1 +1,1 @@
- i wanted to do more of a footnote, where I have an asterisk or superscript 1 or whatever it has to be, and then the explanatory note is below or somewhere outside of the table. Ashwin had a super easy way to do it but I can't find an example
+Why do get windows button in Linux laptops. I mean, why can't we have linux button instead of windows by default. I know mac has different icon :thinking_face:
