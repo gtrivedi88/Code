@@ -1,3 +1,7 @@
-In the *Image Name* field, enter an appropriate image name.
+== Review the application that you created
 
- Each component may contain lowercase letters, digits and separators. A separator is defined as a period, one or two underscores, or one or more hyphens. A component may not start or end with a separator
+* Select *Open Component in catalog*. Alternatively, you can select *Catalog*, and you should see the application you just created. 
+
+* Review the source code of the application that you just created. To review the source code, on the *Overview* tab select *View Source*. 
+
+* Review the documentation of the application you just created. To review the documentation, on the *Overview* tab select *View Tech Docs*.
