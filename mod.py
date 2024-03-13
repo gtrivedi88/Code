@@ -1,3 +1,3 @@
-From the *Owner* drop down list, select an appropriate RHDH component owner under which you want this application.
+In the *Image Name* field, enter an appropriate image name.
 
-the default value is `user:guest`. This owner list will show what's being registered in the own entity, leave the default value if no owner has been registered.
+ Each component may contain lowercase letters, digits and separators. A separator is defined as a period, one or two underscores, or one or more hyphens. A component may not start or end with a separator
