@@ -1,33 +1,35 @@
+:_mod-docs-content-type: PROCEDURE
+
+[id="view-security-insights_{context}"]
 = View security insights
 
-After you update your component, the update automatically triggers the `on-push` pipeline. By default, {ProductShortName} builds your applications using the default build pipeline. This pipeline offers quick and easy containerized deployment. It also secures your supply chain, by conforming to the specification for SLSA Build Level 3.
+After updating your component, the `on-push` pipeline is automatically triggered. By default, {ProductShortName} uses a standard build pipeline for quick, containerized deployment, enhancing supply chain security by meeting SLSA Build Level 3 specifications.
 
 
 .A successful pipeline run
 image::pipeline_run.png[]
 
-The pipeline run offers a visual representation of all the tasks in a pipeline. A "green" status for each task indicates a successful pass through all checks, simplifying your development workflow by minimizing the need for detailed pipeline oversight.
+This visual representation outlines each pipeline task. A *green* status indicates successful completion, streamlining your workflow without extensive oversight.
 
-The pipeline run includes the following standard tasks for code retrieval, compilation, building, and scanning:
+Initial build pipeline tasks include:
 
-[Discrete]
-== `init`
-Initialize Pipeline Task, include flags for rebuild and auth. Generates image repository secret used by the PipelineRun.
+* *`init`*: Initializes the pipeline, setting up rebuild flags and authentication. Creates an image repository secret for PipelineRun.
 
-[Discrete]
-== `clone-repository`
-The git-clone Task will clone a repo from the provided url into the output Workspace. By default the repo will be cloned into the root of your Workspace.
+* *`clone-repository`*: Clones the specified repository into the output workspace using the git-clone Task.
 
-[Discrete]
-== `build-container`
-The  `build-container` task builds source code into a container image and pushes the image into container registry using buildah tool. In addition it generates a SBOM file, injects the SBOM file into final container image and pushes the SBOM file as separate image using cosign tool.
+* *`build-container`*: Builds the source code into a container image and pushes it to a registry with Buildah. Also generates an SBOM, injects it into the final image, and pushes the SBOM as a separate image with Cosign.
 
-[Discrete]
-== `acs` tasks
-[NOTE]
-====
+* *`update-deployment`*: Task to update deployment with newly built image in gitops repository.
+
+* *`acs` tasks*: Performs security checks on the code and deployment configurations to ensure adherence to security policies and best practices.
+
+* *`show-sbom`*: Generates a detailed inventory of all software components and libraries used in the application, enhancing transparency and aiding in vulnerability management.
+
+* *`summary`*: Summary Pipeline Task. Prints PipelineRun information, removes image repository secret used by the PipelineRun.
+
+== cs` tasks
 If you have installed ACS, the status of the ACS tasks (for example, `roxctl image scan`) appears green. Otherwise, it appears greyed out.
-====
+
 
 .The ACS tasks in the pipeline run
 image::acs-tasks.png[]
@@ -77,7 +79,6 @@ Here's how to interpret these reports:
 ** *Component Version:* The version of the affected component.
 ** *Remediation Suggestions:* Recommendations for addressing the vulnerability, including the version in which the vulnerability is fixed, if applicable.
 
-[Discrete]
 == `show-sbom`
 The `scan-export-sbom` task contributes to software supply chain transparency by listing all software libraries a component uses, facilitating the identification of vulnerabilities and assessment of security impacts.
 
@@ -155,4 +156,122 @@ This information helps you verify that individual libraries are safely-sourced, 
                    "name": "syft:package:foundBy",
                    "value": "python-package-cataloger"
                    ...
+----
+
+
+= View Security Insights
+
+After updating your component, the `on-push` pipeline is automatically triggered. By default, {ProductShortName} uses a standard build pipeline for quick, containerized deployment, enhancing supply chain security by meeting SLSA Build Level 3 specifications.
+
+.A Successful Pipeline Run
+image::pipeline_run.png[]
+
+This visual representation outlines each pipeline task. A "green" status indicates successful completion, streamlining your workflow without extensive oversight. Key tasks include:
+
+[discrete]
+== `init`
+Initializes the pipeline, setting up rebuild flags and authentication. Creates an image repository secret for PipelineRun.
+
+[discrete]
+== `clone-repository`
+Clones the specified repository into the output workspace using the git-clone Task.
+
+[discrete]
+== `build-container`
+Builds the source code into a container image and pushes it to a registry with Buildah. Also generates an SBOM, injects it into the final image, and pushes the SBOM as a separate image with Cosign.
+
+[discrete]
+== `acs` tasks
+[NOTE]
+====
+ACS tasks like `roxctl image scan` show as green if ACS is installed, otherwise greyed out.
+====
+.The ACS Tasks in the Pipeline Run
+image::acs-tasks.png[]
+
+Three ACS tasks perform security checks:
+
+* `roxctl image scan` - Scans for vulnerabilities.
+* `roxctl image check` - Enforces policy checks, e.g., banning log4j.
+* `roxctl deployment check` - Verifies `deployment.yaml` configurations.
+
+[discrete]
+== Visualizing ACS Scan Reports
+
+Access detailed task reports via a structured pop-up in the Red Hat Developer Hub under the *CI* tab. The pop-up includes:
+
+* *Advanced Cluster Security*: Shows tabs for ACS tasks with summaries of identified security issues.
+* *Others*: Displays results like IMAGE_URL and IMAGE_DIGEST, visible when additional sections are present.
+
+.Viewing ACS Scan Reports
+Procedure:
+
+. In *Catalog*, select the component to review ACS scan reports.
+. In the *CI* tab, under *Actions*, click the *View output* icon.
+
+.The Detailed ACS Scan Reports
+image::acs-report.png[]
+
+[discrete]
+== Interpreting ACS Scan Reports
+
+Reports provide crucial security insights:
+
+* *Vulnerability Breakdown*: Categorizes vulnerabilities by severity and fixability.
+* Each vulnerability report includes CVE ID, severity, affected component, version, and remediation suggestions.
+
+[Discrete]
+== `show-sbom`
+Pushes SBOM to a CycloneDX repository, enhancing transparency.
+
+.The `scan-export-sbom` Task
+image::sbom-export.png[]
+
+[NOTE]
+====
+- Green status appears for `scan-export-sbom` if TPA is installed.
+- {ProductShortName} does not support CycloneDX directly.
+====
+
+[discrete]
+== Viewing SBOM
+
+SBOMs detail software composition, aiding in vulnerability identification.
+
+.Procedure
+
+. In *Catalog*, open the component for SBOM review.
+. In the *CI* tab, click the link icon.
+
+.. External links open the SBOM in a new tab.
+.. Absence of an external link shows the SBOM task logs for direct search.
+
+[discrete]
+== Reading the SBOM
+
+SBOMs list project-used libraries, including author, name, version, and licenses.
+
+.Example SBOM
+[source,json]
+----
+{
+   "bomFormat": "CycloneDX",
+   "specVersion": "1.4",
+   "serialNumber": "urn:uuid:89146fc4-342f-496b-9cc9-07a6a1554220",
+   "version": 1,
+   "metadata": {
+       ...
+   },
+   "components": [
+       {
+           "bom-ref": "pkg:pypi/flask@2.1.0",
+           "type": "library",
+           "author": "Armin Ronacher",
+           "name": "Flask",
+           "version": "2.1.0",
+           "licenses": [{"license": {"id": "BSD-3-Clause"}}],
+           "cpe": "cpe:2.3:a:flask:2.1.0",
+           "purl": "pkg:pypi/Flask@2.1.0",
+           "properties": [{"name": "foundBy", "value": "python-package-cataloger"}]
+           ...
 ----
