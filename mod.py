@@ -1,62 +1,29 @@
-#!/bin/bash
-#
-# Copyright (c) 2023 Red Hat, Inc.
-# This program and the accompanying materials are made
-# available under the terms of the Eclipse Public License 2.0
-# which is available at https://www.eclipse.org/legal/epl-2.0/
-#
-# SPDX-License-Identifier: EPL-2.0
-#
-# Utility script build html previews with referenced images
-# Requires: asciidoctor - see https://docs.asciidoctor.org/asciidoctor/latest/install/linux-packaging/
-# input: titles/
-# output: titles-generated/ and titles-generated/$BRANCH/
-
-# grep regex for title folders to exclude from processing below
-EXCLUDED_TITLES="rhdh-plugins-reference"
-BRANCH="main"
-
-while [[ "$#" -gt 0 ]]; do
-  case $1 in
-    '-b') BRANCH="$2"; shift 1;; 
-  esac
-  shift 1
-done
-
-rm -fr titles-generated/; 
-mkdir -p titles-generated/"${BRANCH}"; 
-echo "<html><head><title>Red Hat Developer Hub Documentation Preview - ${BRANCH}</title></head><body><ul>" > titles-generated/"${BRANCH}"/index.html;
-# exclude the rhdh-plugins-reference as it's embedded in the admin guide
-# shellcheck disable=SC2044,SC2013
-for t in $(find titles -name master.adoc | sort -uV | grep -E -v "${EXCLUDED_TITLES}"); do
-    d=${t%/*}; d=${d/titles/titles-generated\/${BRANCH}}; 
-    CMD="asciidoctor --backend=html5 -o index.html --section-numbers -a toc --failure-level ERROR --trace --warnings --destination-dir $d $t"; 
-    echo "Building $t into $d ..."; 
-    echo "  $CMD"
-    $CMD
-    for im in $(grep images/ "$d/index.html" | sed -r -e "s#.+(images/[^\"]+)\".+#\1#"); do 
-        # echo "  Copy $im ..."; 
-        IMDIR="$d/${im%/*}/"
-        mkdir -p "${IMDIR}"; rsync -q "$im" "${IMDIR}";
-    done
-    for f in $(find "$d/" -type f); do echo "    $f"; done
-    echo "<li><a href=${d/titles-generated\/${BRANCH}/.}>${d/titles-generated\/${BRANCH}\//}</a></li>" >> titles-generated/"${BRANCH}"/index.html;
-done
-echo "</ul></body></html>" >> titles-generated/"${BRANCH}"/index.html
-
-# shellcheck disable=SC2143
-if [[ $BRANCH == "pr-"* ]]; then
-  # fetch the existing https://redhat-developer.github.io/red-hat-developers-documentation-rhdh/index.html to add prs and branches
-  curl -sSL https://redhat-developer.github.io/red-hat-developers-documentation-rhdh/pulls.html -o titles-generated/pulls.html
-  if [[ -z $(grep "./${BRANCH}/index.html" titles-generated/pulls.html) ]]; then
-      echo "Building root index for $BRANCH in titles-generated/pulls.html ..."; 
-      echo "<li><a href=./${BRANCH}/index.html>${BRANCH}</a></li>" >> titles-generated/pulls.html
-  fi
-else 
-  # fetch the existing https://redhat-developer.github.io/red-hat-developers-documentation-rhdh/index.html to add prs and branches
-  curl -sSL https://redhat-developer.github.io/red-hat-developers-documentation-rhdh/index.html -o titles-generated/index.html
-  if [[ -z $(grep "./${BRANCH}/index.html" titles-generated/index.html) ]]; then
-      echo "Building root index for $BRANCH in titles-generated/index.html ..."; 
-      echo "<li><a href=./${BRANCH}/index.html>${BRANCH}</a></li>" >> titles-generated/index.html
-  fi
-fi
+$ chmod +x ./build.sh
+$ ./build.sh -b $CI_COMMIT_REF_NAME
+Building titles/about/master.adoc into titles-generated/main/about ...
+  asciidoctor --backend=html5 -o index.html --section-numbers -a toc --failure-level ERROR --trace --warnings --destination-dir titles-generated/main/about titles/about/master.adoc
+    titles-generated/main/about/index.html
+Building titles/install/master.adoc into titles-generated/main/install ...
+  asciidoctor --backend=html5 -o index.html --section-numbers -a toc --failure-level ERROR --trace --warnings --destination-dir titles-generated/main/install titles/install/master.adoc
+    titles-generated/main/install/index.html
+Building titles/managing_ec/master.adoc into titles-generated/main/managing_ec ...
+  asciidoctor --backend=html5 -o index.html --section-numbers -a toc --failure-level ERROR --trace --warnings --destination-dir titles-generated/main/managing_ec titles/managing_ec/master.adoc
+    titles-generated/main/managing_ec/index.html
+Building titles/managing_sboms/master.adoc into titles-generated/main/managing_sboms ...
+  asciidoctor --backend=html5 -o index.html --section-numbers -a toc --failure-level ERROR --trace --warnings --destination-dir titles-generated/main/managing_sboms titles/managing_sboms/master.adoc
+    titles-generated/main/managing_sboms/index.html
+Building titles/release_notes/master.adoc into titles-generated/main/release_notes ...
+  asciidoctor --backend=html5 -o index.html --section-numbers -a toc --failure-level ERROR --trace --warnings --destination-dir titles-generated/main/release_notes titles/release_notes/master.adoc
+    titles-generated/main/release_notes/index.html
+Building titles/software_templates/master.adoc into titles-generated/main/software_templates ...
+  asciidoctor --backend=html5 -o index.html --section-numbers -a toc --failure-level ERROR --trace --warnings --destination-dir titles-generated/main/software_templates titles/software_templates/master.adoc
+    titles-generated/main/software_templates/index.html
+$ mv titles-generated/ public/
+Uploading artifacts for successful job
+00:02
+Uploading artifacts...
+public: found 15 matching artifact files and directories 
+Uploading artifacts as "archive" to coordinator... 201 Created  id=20604966 responseStatus=201 Created token=64_PtsfV
+Cleaning up project directory and file based variables
+00:00
+Job succeeded
