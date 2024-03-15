@@ -1,54 +1,67 @@
-= Customizing {ProductName}
+name: GitHub Pages
 
-{ProductShortName}'s ready-to-use software templates and build pipeline runs offer predefined pathways that incorporate security practices directly into the development workflow. These templates significantly reduce the cognitive load on developers, enabling them to concentrate more on innovation and less on security-related concerns. 
+on:
+  push:
+    branches: 
+    - main
+    - rhdh-1.**
+    - 1.**.x
 
-Having said that, cluster administrators have the capability to:
+jobs:
+  adoc_build:
+    name: Asciidoctor Build For GH Pages
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
-* Customize ready-to-use software templates for their on-prem environment
+    - name: Setup environment
+      run: |
+        # update
+        sudo apt-get update -y || true
+        # install 
+        sudo apt-get -y -q install asciidoctor && asciidoctor --version
+        echo "GIT_BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_ENV
 
-* Customize build pipeline runs
+    - name: Build guides and indexes
+      run: |
+        echo "Building branch ${{ env.GIT_BRANCH }}"
+        build/scripts/build.sh -b ${{ env.GIT_BRANCH }}
 
-This customization process is crucial for enabling developers to focus primarily on coding by simplifying development workflows and mitigating concerns related to pipelines, vulnerabilities, and policies.
+    # repo must be public for this to work
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v3
+      # if: github.ref == 'refs/heads/main'
+      with:
+        github_token: ${{ secrets.RHDH_BOT_TOKEN }}
+        publish_branch: gh-pages
+        keep_files: true
+        publish_dir: ./titles-generated
 
-include::topics/proc_customizing-sample-software-templates.adoc[leveloffset=+1]
+    - name: Cleanup merged PR branches 
+      run: |
+        PULL_URL="https://api.github.com/repos/redhat-developer/red-hat-developers-documentation-rhdh/pulls"
+        GITHUB_TOKEN="${{ secrets.RHDH_BOT_TOKEN }}"
+        git config user.name "rhdh-bot service account"
+        git config user.email "rhdh-bot@redhat.com"
 
-
-= Customizing sample software templates
-
-[role="_abstract"]
-
-Learn how to customize ready-to-use software templates for your on-prem environment. 
-
-As a cluster administrator you can customize each and every aspect of the ready-to-use software templates (for example, its metadata and specifications). Additionally, you can customize ready-to-use software templates for for your on-prem environment.
-
-.Prerequisites
-
-* You have used the forked link:https://github.com/redhat-appstudio/tssc-sample-templates[ready-to-use software templates] repository URL during the {ProductShortName} install process.
-
-.Procedure
-
-. Clone the forked repository and open it in the text editor of your choice, for example Visual Studio code.
-
-. Open the *properties* file and update default host values for your on-prem host environment.
-
-+
-.The properties file
-image::properties.png[]
-
-. Run the *generate.sh* script on your terminal. This script updates the software template for all the instances of default host values with the values you provided.
-
-+
-[source,terminal]
-----
-./generate.sh
-----
-
-+
-.The generate.sh script
-image::generate.png[]
-
-. Add, commit, and push the changes to the repository. The system automatically updates the default templates with updated values in {RHDHShortName}.
-
-.Verification
-
-* You can create a new application to verify the updates.
+        git checkout gh-pages; git pull || true
+        for d in $(find . -maxdepth 1 -name "pr-*" -type d); do 
+          PR="${d#*pr-}"
+          echo -n "Check merge status of PR $PR ... "
+          if [[ $(curl -sSL -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $GITHUB_TOKEN" "$PULL_URL/$PR" | grep merged\") == *"merged\": true"* ]]; then
+            echo "merged, can delete from pulls.html and remove folder $d"
+            git rm -fr --quiet $d
+            sed -r -e "/pr-$PR\/index.html>pr-$PR</d" -i pulls.html
+          else
+            echo "PR is unmerged (or could not read API)"
+          fi
+        done
+        git commit -s -m "remove merged PR branches" .
+        git push origin gh-pages
