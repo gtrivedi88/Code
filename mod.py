@@ -1,67 +1,62 @@
-name: GitHub Pages
+#!/bin/bash
+#
+# Copyright (c) 2023 Red Hat, Inc.
+# This program and the accompanying materials are made
+# available under the terms of the Eclipse Public License 2.0
+# which is available at https://www.eclipse.org/legal/epl-2.0/
+#
+# SPDX-License-Identifier: EPL-2.0
+#
+# Utility script build html previews with referenced images
+# Requires: asciidoctor - see https://docs.asciidoctor.org/asciidoctor/latest/install/linux-packaging/
+# input: titles/
+# output: titles-generated/ and titles-generated/$BRANCH/
 
-on:
-  push:
-    branches: 
-    - main
-    - rhdh-1.**
-    - 1.**.x
+# grep regex for title folders to exclude from processing below
+EXCLUDED_TITLES="rhdh-plugins-reference"
+BRANCH="main"
 
-jobs:
-  adoc_build:
-    name: Asciidoctor Build For GH Pages
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
+while [[ "$#" -gt 0 ]]; do
+  case $1 in
+    '-b') BRANCH="$2"; shift 1;; 
+  esac
+  shift 1
+done
 
-    - name: Setup environment
-      run: |
-        # update
-        sudo apt-get update -y || true
-        # install 
-        sudo apt-get -y -q install asciidoctor && asciidoctor --version
-        echo "GIT_BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_ENV
+rm -fr titles-generated/; 
+mkdir -p titles-generated/"${BRANCH}"; 
+echo "<html><head><title>Red Hat Developer Hub Documentation Preview - ${BRANCH}</title></head><body><ul>" > titles-generated/"${BRANCH}"/index.html;
+# exclude the rhdh-plugins-reference as it's embedded in the admin guide
+# shellcheck disable=SC2044,SC2013
+for t in $(find titles -name master.adoc | sort -uV | grep -E -v "${EXCLUDED_TITLES}"); do
+    d=${t%/*}; d=${d/titles/titles-generated\/${BRANCH}}; 
+    CMD="asciidoctor --backend=html5 -o index.html --section-numbers -a toc --failure-level ERROR --trace --warnings --destination-dir $d $t"; 
+    echo "Building $t into $d ..."; 
+    echo "  $CMD"
+    $CMD
+    for im in $(grep images/ "$d/index.html" | sed -r -e "s#.+(images/[^\"]+)\".+#\1#"); do 
+        # echo "  Copy $im ..."; 
+        IMDIR="$d/${im%/*}/"
+        mkdir -p "${IMDIR}"; rsync -q "$im" "${IMDIR}";
+    done
+    for f in $(find "$d/" -type f); do echo "    $f"; done
+    echo "<li><a href=${d/titles-generated\/${BRANCH}/.}>${d/titles-generated\/${BRANCH}\//}</a></li>" >> titles-generated/"${BRANCH}"/index.html;
+done
+echo "</ul></body></html>" >> titles-generated/"${BRANCH}"/index.html
 
-    - name: Build guides and indexes
-      run: |
-        echo "Building branch ${{ env.GIT_BRANCH }}"
-        build/scripts/build.sh -b ${{ env.GIT_BRANCH }}
-
-    # repo must be public for this to work
-    - name: Deploy
-      uses: peaceiris/actions-gh-pages@v3
-      # if: github.ref == 'refs/heads/main'
-      with:
-        github_token: ${{ secrets.RHDH_BOT_TOKEN }}
-        publish_branch: gh-pages
-        keep_files: true
-        publish_dir: ./titles-generated
-
-    - name: Cleanup merged PR branches 
-      run: |
-        PULL_URL="https://api.github.com/repos/redhat-developer/red-hat-developers-documentation-rhdh/pulls"
-        GITHUB_TOKEN="${{ secrets.RHDH_BOT_TOKEN }}"
-        git config user.name "rhdh-bot service account"
-        git config user.email "rhdh-bot@redhat.com"
-
-        git checkout gh-pages; git pull || true
-        for d in $(find . -maxdepth 1 -name "pr-*" -type d); do 
-          PR="${d#*pr-}"
-          echo -n "Check merge status of PR $PR ... "
-          if [[ $(curl -sSL -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $GITHUB_TOKEN" "$PULL_URL/$PR" | grep merged\") == *"merged\": true"* ]]; then
-            echo "merged, can delete from pulls.html and remove folder $d"
-            git rm -fr --quiet $d
-            sed -r -e "/pr-$PR\/index.html>pr-$PR</d" -i pulls.html
-          else
-            echo "PR is unmerged (or could not read API)"
-          fi
-        done
-        git commit -s -m "remove merged PR branches" .
-        git push origin gh-pages
+# shellcheck disable=SC2143
+if [[ $BRANCH == "pr-"* ]]; then
+  # fetch the existing https://redhat-developer.github.io/red-hat-developers-documentation-rhdh/index.html to add prs and branches
+  curl -sSL https://redhat-developer.github.io/red-hat-developers-documentation-rhdh/pulls.html -o titles-generated/pulls.html
+  if [[ -z $(grep "./${BRANCH}/index.html" titles-generated/pulls.html) ]]; then
+      echo "Building root index for $BRANCH in titles-generated/pulls.html ..."; 
+      echo "<li><a href=./${BRANCH}/index.html>${BRANCH}</a></li>" >> titles-generated/pulls.html
+  fi
+else 
+  # fetch the existing https://redhat-developer.github.io/red-hat-developers-documentation-rhdh/index.html to add prs and branches
+  curl -sSL https://redhat-developer.github.io/red-hat-developers-documentation-rhdh/index.html -o titles-generated/index.html
+  if [[ -z $(grep "./${BRANCH}/index.html" titles-generated/index.html) ]]; then
+      echo "Building root index for $BRANCH in titles-generated/index.html ..."; 
+      echo "<li><a href=./${BRANCH}/index.html>${BRANCH}</a></li>" >> titles-generated/index.html
+  fi
+fi
