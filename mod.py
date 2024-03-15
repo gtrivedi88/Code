@@ -1,62 +1,46 @@
-#!/bin/bash
-#
-# Copyright (c) 2023 Red Hat, Inc.
-# This program and the accompanying materials are made
-# available under the terms of the Eclipse Public License 2.0
-# which is available at https://www.eclipse.org/legal/epl-2.0/
-#
-# SPDX-License-Identifier: EPL-2.0
-#
-# Utility script build html previews with referenced images
-# Requires: asciidoctor - see https://docs.asciidoctor.org/asciidoctor/latest/install/linux-packaging/
-# input: titles/
-# output: titles-generated/ and titles-generated/$BRANCH/
+image: ubuntu:latest
 
-# grep regex for title folders to exclude from processing below
+stages:
+  - build
+  - deploy
 
-BRANCH="main"
+variables:
+  GIT_STRATEGY: fetch
 
-while [[ "$#" -gt 0 ]]; do
-  case $1 in
-    '-b') BRANCH="$2"; shift 1;; 
-  esac
-  shift 1
-done
+before_script:
+  # Update package lists and install dependencies
+  - apt-get update -y || true
+  # Install asciidoctor for AsciiDoc processing and rsync for file operations
+  - apt-get install -y asciidoctor rsync
 
-rm -fr titles-generated/; 
-mkdir -p titles-generated/"${BRANCH}"; 
-echo "<html><head><title>Red Hat Developer Hub Documentation Preview - ${BRANCH}</title></head><body><ul>" > titles-generated/"${BRANCH}"/index.html;
-# exclude the rhdh-plugins-reference as it's embedded in the admin guide
-# shellcheck disable=SC2044,SC2013
-for t in $(find titles -name master.adoc | sort -uV | grep -E -v "${EXCLUDED_TITLES}"); do
-    d=${t%/*}; d=${d/titles/titles-generated\/${BRANCH}}; 
-    CMD="asciidoctor --backend=html5 -o index.html --section-numbers -a toc --failure-level ERROR --trace --warnings --destination-dir $d $t"; 
-    echo "Building $t into $d ..."; 
-    echo "  $CMD"
-    $CMD
-    for im in $(grep images/ "$d/index.html" | sed -r -e "s#.+(images/[^\"]+)\".+#\1#"); do 
-        # echo "  Copy $im ..."; 
-        IMDIR="$d/${im%/*}/"
-        mkdir -p "${IMDIR}"; rsync -q "$im" "${IMDIR}";
-    done
-    for f in $(find "$d/" -type f); do echo "    $f"; done
-    echo "<li><a href=${d/titles-generated\/${BRANCH}/.}>${d/titles-generated\/${BRANCH}\//}</a></li>" >> titles-generated/"${BRANCH}"/index.html;
-done
-echo "</ul></body></html>" >> titles-generated/"${BRANCH}"/index.html
+build:
+  stage: build
+  script:
+    # Ensure the build script is executable
+    - chmod +x build.sh
+    # Execute the build script, specifying the current branch name
+    - ./build.sh -b $CI_COMMIT_REF_NAME
+  # Specify the directory where the build output is located as artifacts
+  artifacts:
+    paths:
+      - titles-generated/
+  # Define rules to only run this job for main branch and specific patterns
+  only:
+    - main
+  tags: [docker]
 
-# shellcheck disable=SC2143
-if [[ $BRANCH == "pr-"* ]]; then
-  # fetch the existing https://dance-red-hat-trusted-application-pipeline-8f78c5411b693c9466db.pages.redhat.com/index.html to add prs and branches
-  curl -sSL https://dance-red-hat-trusted-application-pipeline-8f78c5411b693c9466db.pages.redhat.com/pulls.html -o titles-generated/pulls.html
-  if [[ -z $(grep "./${BRANCH}/index.html" titles-generated/pulls.html) ]]; then
-      echo "Building root index for $BRANCH in titles-generated/pulls.html ..."; 
-      echo "<li><a href=./${BRANCH}/index.html>${BRANCH}</a></li>" >> titles-generated/pulls.html
-  fi
-else 
-  # fetch the existing https://dance-red-hat-trusted-application-pipeline-8f78c5411b693c9466db.pages.redhat.com/index.html to add prs and branches
-  curl -sSL https://dance-red-hat-trusted-application-pipeline-8f78c5411b693c9466db.pages.redhat.com/index.html -o titles-generated/index.html
-  if [[ -z $(grep "./${BRANCH}/index.html" titles-generated/index.html) ]]; then
-      echo "Building root index for $BRANCH in titles-generated/index.html ..."; 
-      echo "<li><a href=./${BRANCH}/index.html>${BRANCH}</a></li>" >> titles-generated/index.html
-  fi
-fi
+pages:
+  stage: deploy
+  script:
+    # Prepare the public directory for GitLab Pages
+    - mkdir -p public
+    # Move the build output to the public directory, ensuring it's ready for GitLab Pages
+    - mv titles-generated/* public/
+  # Define the public directory as artifacts for GitLab Pages
+  artifacts:
+    paths:
+      - public
+  # Ensure this job runs only for the default branch (typically main)
+  only:
+    - main
+  tags: [docker]
