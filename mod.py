@@ -1,7 +1,6 @@
-== Advanced Cluster Security tasks
-{ProductShortName} leverages Advanced Cluster Security (ACS) to protect your deployments. If ACS is installed and configured, the status of the ACS tasks (for example, `roxctl image scan`) appears green. Otherwise, it appears greyed out.
-
 [NOTE]
 ====
-ACS tasks in the pipeline run are only successful if you have installed and configured ACS during the RHTAP install process. For detailed information on  ACS, refer <>.
+* {RHACSShortName} tasks within the pipeline only succeed only if you already have installed and configured {RHACSShortName} during the {ProductShortName} install process. For detailed information on installing {RHACSShortName}, refer link:{linkRHACSInstallGuide}[Installing Red Hat {RHACSLongName} for Kubernetes].
+
+* If you did not install and configure {RHACSShortName} during the {ProductShortName} install process, refer link:https://github.com/redhat-appstudio/tssc-sample-pipelines/blob/main/hack/build/README.md[Configure ACS].
 ====
