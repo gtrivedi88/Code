@@ -1,1 +1,1 @@
-{ProductShortName} leverages {RHACSLongName} ({RHACSShortName}) and its security checks within the pipeline. If {RHACSShortName} is installed and configured, the pipeline runs the {RHACSShortName} tasks (for example, `roxctl image scan`) and at the end displays a green check on successful run. However, if {RHACSShortName} is not installed or congigured, the pipleline skips the {RHACSShortName} tasks.
+You can also navigate to your {RHACSShortName} console and review detailed reports for a particular image.
