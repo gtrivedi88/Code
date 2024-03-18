@@ -1,6 +1,1 @@
-[NOTE]
-====
-* {RHACSShortName} tasks within the pipeline only succeed only if you already have installed and configured {RHACSShortName} during the {ProductShortName} install process. For detailed information on installing {RHACSShortName}, refer link:{linkRHACSInstallGuide}[Installing Red Hat {RHACSLongName} for Kubernetes].
-
-* If you did not install and configure {RHACSShortName} during the {ProductShortName} install process, refer link:https://github.com/redhat-appstudio/tssc-sample-pipelines/blob/main/hack/build/README.md[Configure ACS].
-====
+{ProductShortName} leverages {RHACSLongName} ({RHACSShortName}) and its security checks within the pipeline. If {RHACSShortName} is installed and configured, the pipeline runs the {RHACSShortName} tasks (for example, `roxctl image scan`) and at the end displays a green check on successful run. However, if {RHACSShortName} is not installed or congigured, the pipleline skips the {RHACSShortName} tasks.
