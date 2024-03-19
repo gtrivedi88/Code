@@ -1,1 +1,1 @@
-for this application. The default value is `user:guest`, which appears if no specific owner is registered in the system. If you have not registered an owner, retain the default `user:guest` selection.
+ From the *Owner* dropdown list, select an appropriate RHDH component owner for this application. The default value is `user:guest`, which appears if no specific owner is registered in the system. If you have not registered an owner, retain the default `user:guest` selection. However, you can change the `guest` to your logged user name.
