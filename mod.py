@@ -1,78 +1,74 @@
-:_mod-docs-content-type: PROCEDURE
+= Update application and view security insights
 
-[id="customizing-sample-software-templates_{context}"]
-= Customizing sample software templates
+[role="_abstract"]
+After successfully building your component with {ProductShortName}, the next step is to update your application and delve into the security insights.
 
-Learn how to customize ready-to-use software templates for your on-prem environment. Cluster administrators have full control over this process, including modifying metadata and specifications.
+== Initiating code updates
 
-.Prerequisites
+With {ProductShortName}, this process is straightforward.
 
-* You have used the forked repository URL from link:https://github.com/redhat-appstudio/tssc-sample-templates[tssc-sample-templates] during the {ProductShortName} install process.
+. Select *Catalog* and then select an appropriate component for which you want to view security insights.
 
-.Procedure
+. On the *Overview* tab, select *View Source* tab to see your project in GitLab or GitHub. Here, you can also select *View Tech Docs* to see your project's documentation. The source of the documentation is the `docs` directory in your repository. If you update these files and the pipeline runs successfully, your Tech Docs will update too.
 
-. Clone your forked repository, and then open it in your preferred text editor, such as Visual Studio Code.
+If you are using a GitLab repository to make code updates, you need to manually step up the webhooks:
 
-. Locate the *properties* file within your project directory. This file stores the default values that can customize. Open it for editing and update the following key-value pairs according to your environment.
+. Log in to the OpenShift web console.
 
-+
-[cols="1,1"]
-|===
-|Key |Description
+. In the Administrator perspective, for `rhtap` project, expand Pipelines, and select `PipelineRuns`.
 
-|export GITHUB__DEFAULT__HOST
-a|Set this to your on-prem GitHub host. Default is `github.com`.
-
-|export GITLAB__DEFAULT__HOST
-a|Set this to your on-prem GitLab host. Default is `gitlab.com`.
-
-|export QUAY__DEFAULT__HOST
-a|The default Quay URL correspond to your specific on-prem environment. The default quay host is `quay.io`.
-
-|export DEFAULT__DEPLOYMENT__NAMESPACE__PREFIX
-a|The namespace prefix for deployments within {ProductShortName}. Default is `rhtap-app`.
-
-NOTE: Update this if you have modified the default `trusted-application-pipeline: namespace` during the {ProductShortName} installation process. If you want to change the deployment namespace post-installation, follow Step 5.
-
-|===
+. Select `rhtap-pe-info-<>` pipeline run, and then select Logs.
 
 +
-.The properties file
-image::properties.png[]
+[NOTE]
+====
+This step provides you the webhook URL and the . that you need to add in your GitLab repository.
+====
 
-. Run the *generate.sh* script in your terminal. This action adjusts the software templates, replacing default host values with your specified inputs.
+. In an appropriate GitLab repository, go to Settings > Webhooks.
+
+. In the URL field, enter the webhook URL that you got as part of Step 3.
+
+. In the . Token field, enter the . that you got as part of Step 3.
+
+. In the Trigger section, select Push events and Merge request events.
+
+. On your terminal, run the following command:
 
 +
-[source,terminal]
+[source,bash]
 ----
-./generate.sh
+kubectl -n target-namespace create . generic gitlab-webhook-config --from-literal provider.token=<GITLAB_TOKEN> --from-literal webhook..=<WEBHOOK_.> # <1>
 ----
+<1> The GITLAB_TOKEN is your personal GitLab account token. The WEBHOOK_. is the . that you got as part of Step 3.
+
+. Add the following in your source repository CR yaml, under `.spec`
 
 +
-.The generate.sh script
-image::generate.png[]
+[source,yaml]
+----
+git_provider
+    # URL: "https://gitlab.example.com" #Set this if you are using on-prem GitLab host.
+on-prem GitLab host
+    .:
+        name: "gitlab-webhook-config"
+        key: "provider.token"
+    webhook-.:
+        name: "gitlab-webhook-config"
+        key: "webhook.."
+----
 
-. Commit your changes and push them to your repository. This update automatically refreshes the default templates in {RHDHShortName} with your custom values. Alternatively, on the {RHDHShortName} platform you can import and refresh a single or all customized templates. To import and refresh a single or all customized templates:
 
-.. Navigate to *Create* > *Register Existing Component*.
+== Making changes to your code
 
-.. If you are importing a single customized template, on your forked template repository, navigate to `templates` directory, select `template.yaml` and from the broweser address bar copy the we address. For example, https://github.com/<username>/tssc-sample-templates/blob/main/templates/devfile-sample-code-with-quarkus-dance/template.yaml. If you are importing all the customized teamplates, select `all.yaml` and broweser address bar copy the we address. For example, https://github.com/<username>/tssc-sample-templates/blob/main/all.yaml
+With access to your repository, you're ready to engage in the familiar process of working with a git repository. Here's how to proceed:
 
-.. On the {RHDHShortName} platform, in the Select URL field, enter either the URL for a single template or for all tyhe templates.
+- **Clone** your repository to start working on it either locally or in your development environment.
 
-.. Select Analyze and select Import. The system import and refresh a single or all customized templates in the {RHDHShortName}
+- **Modify** your application, like updating technical docs or `index.html`, or by adding new features or bug fixes.
 
-. (Optional) For changes made to the deployment namespace post-installation:
+- *Commit* your changes.
 
-.. Log in to the OpenShift web console, in the Administrator perspective, create a new namespace.
+- **Push** your changes to the repository.
 
-.. Run the `PipelineRun` within this new namespace.
-
-.Verification
-
-* Test the effectiveness of your customizations by initiating a new application project. This ensures your adjustments are correctly applied and operational within the on-prem environment.
-
-[role="_additional-resources"]
-.Next steps
-
-* Create an application.
+After you update your component, the update automatically triggers the `on-push` pipeline. Depending on your workflow, this process might not only move your application closer to product but also engages the security measures, offering you a comprehensive view of the application's development journey.
