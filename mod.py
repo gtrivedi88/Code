@@ -1,1 +1,5 @@
- From the *Owner* dropdown list, select an appropriate RHDH component owner for this application. The default value is `user:guest`, which appears if no specific owner is registered in the system. If you have not registered an owner, retain the default `user:guest` selection. However, you can change the `guest` to your logged user name.
+In the *Repository Owner* field, enter the name of the organization that you have , user , or project that this repository belongs to. You find this information in your `private-value.yaml` file.
+
+it's quite complicated, but the org name will not be `private-value.yaml` file.
+`private-value.yaml` currently only has git app integration information. each git app is tied with  an git org.
+you can only input the org which you have it's corresponding git app integration set in `private-value.yaml`
