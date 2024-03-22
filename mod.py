@@ -1,1 +1,1 @@
-`build-container`*: Uses Buildah to transform source code into a container image and push it to a registry. This step also generates an SBOM, incorporates it into the final image, and pushes the SBOM as a separate image with Cosign. Generates artifacts like image signature (.sig), and attestation (.att)
+Here's an example of how to interpret `roxctl image scan` (Image Scan) reports, similarly you can select `roxctl image check` (Image Check) `roxctl deployment check` (Deployment Check) tabs to view their reports:
