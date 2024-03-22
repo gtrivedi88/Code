@@ -1,1 +1,1 @@
-Here's an example of how to interpret `roxctl image scan` (Image Scan) reports, similarly you can select `roxctl image check` (Image Check) `roxctl deployment check` (Deployment Check) tabs to view their reports:
+Replace <GITLAB_TOKEN> with your personal GitLab account token. Replace <WEBHOOK_SECRET> with the secret obtained in Step 3. Additionally, `rhtap` in `rhtap-app-development` is a default prefix for namespace. If you have modified the default prefix for namespace, ensure to use that prefix. For example, `<namespace-prefix>-development`.
