@@ -1,1 +1,3 @@
-If you want to promote configuration changes in addition to the container image from the development to the stage environment, copy the changes from the `deployment-patch.yaml` file located in the `development` directory and paste them into the `deployment-patch.yaml` file in the `stage` directory.
+.. Review the promotion pipeline in the *CI* tab within {RHDHShortName}.
+
+. Review and merge the PR. Merging triggers ArgoCD, applying changes related to build promotion. 
