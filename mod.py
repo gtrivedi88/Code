@@ -1,3 +1,1 @@
-.. Review the promotion pipeline in the *CI* tab within {RHDHShortName}.
-
-. Review and merge the PR. Merging triggers ArgoCD, applying changes related to build promotion. 
+*For GitLab users:* Setting up webhooks and secrets is necessary for automatic pipeline execution upon code pushes. Follow these steps to set up webhooks:
