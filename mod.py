@@ -1,3 +1,7 @@
- In the Name field, enter an application name consisting of a sequence of alphanumeric characters ([a-zA-Z0-9]), allowing for separators of dashes (-), underscores (_), or periods (.) between them. The name must contain at least 1 character and no more than 63 characters in total. 
+* *`gitops-repo`:* This repository facilitates pull request validation within your GitOps repository. It triggers the gitops-pull-request pipeline (found in the pipelines directory) to ensure that image updates meet your organization's standards. This mechanism is particularly useful in promotion workflows, where the application's state is advanced from one environment to the next, such as from development to staging, or from staging to production.
 
-Valid application name starts from lower case alphanumeric characters or "-", start with a alphanumeric charatcer, and end with an alphanumeric character, for example my-name, r abc-123.
+* *`pipelines`:* This repository houses the implementations of build and validation pipelines that are referenced by the event handlers in both the `gitops-repo` and `source-repo`. By examining the contents of this directory, you can understand the specific actions performed by the pipelines, including how they contribute to the secure promotion and deployment of applications.
+
+* *`source-repo`*: This repository focuses on Dockerfile-based secure supply chain software build pipeline. It encompasses cloning the source code, generating artifacts like image signature (`.sig`) ,attestation (`.att`), Software bill of Materials (`.sbom`), and deploying these to the user's image registry.
+
+* *`tasks`:* This repository houses a collection of tasks that can be added or modified, aligning with organizational needs. For example, Advanced Cluster Security (ACS) tasks can be substituted with alternative checks, or entirely new tasks can be integrated into the pipeline to enhance its functionality and compliance.
