@@ -1,2 +1,4 @@
-Failed to load module: /home/gtrivedi/snap/code/common/.cache/gio-modules/libgiolibproxy.so
-/usr/lib64/firefox/firefox: symbol lookup error: /snap/core20/current/lib/x86_64-linux-gnu/libpthread.so.0: undefined symbol: __libc_pthread_init, version GLIBC_PRIVATE
+ ✘ gtrivedi@gtrivedi-thinkpadt14sgen1  ~  sudo snap refresh code
+
+error: cannot refresh "code": snap "code" has running apps (code), pids:
+       4474,4476,4477,4496,4525,4586,4753,4936,4961,5004,5121,5149,5284,8393,8848,8936,9363,9367
