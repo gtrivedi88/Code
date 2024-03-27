@@ -1,29 +1,26 @@
-:_mod-docs-content-type: PROCEDURE
+. (Optional) If you want to change the deployment namespace prefix post-installation:
 
-[id="customizing-sample-pipelines_{context}"]
-= Customizing sample pipelines
+.. Log in to the OpenShift web console with your administrator credentials.
 
-Customizing sample pipelines and workflows enables organizations to align development practices with specific requirements. This section outlines the steps to personalize pipeline template and adapt pipeline configurations to your organizational needs.
+.. Create create three namespaces with the suffixes `-development` , `-prod`, and `-stage`.
 
-.Prerequisites
+.. Locate the `rhtap` project. Pipelines associated with this project are listed here.
 
-* You have already forked and cloned both the link:https://github.com/redhat-appstudio/tssc-sample-pipelines[sample pipelines] and link:https://github.com/redhat-appstudio/tssc-sample-templates[sample software templates] repositories locally.
+.. Identify the pipeline named `dev_namespace_setup`.
 
-[discrete]
-== Customizing the sample software template repository to update Pipeline as code (`pac`) URLs*
+.. For newly created namespaces (for example, `<your-application>-development` , `<your-application>-prod`, and `<your-application>-stage`)
 
-.Procedure
+... Select the *...* menu for the `dev_namespace_setup` pipeline.
 
-. Access your forked sample pipelines repository and copy the URL from the web address bar. For example, https://github.com/<username>/tssc-sample-pipelines.
+... Select *Start Pipeline*.
 
-. Access the cloned sample templates repository and in terminal run the following command:
+... In the *Namespace* dropdown, choose the corresponding namespace you want to run the pipeline in (for example, `<your-application>-development`)
 
-+
-[source,bash]
-----
-.scripts/update-tekton-definition <your-sample-pipeline-fork-url> <your-sample-pipeline-branch>
+... Select *Start*.
 
-# For example, .scripts/update-tekton-definition https://github.com/<username>/tssc-sample-pipelines main
-----
+... Repeat steps 5a through 5e for each namespace to execute the `dev_namespace_setup` pipeline.
 
-. Review and commit the changes and push them to your repository, effectively updating the templates.
+
+oc new-project "$PREFIX-development"
+oc new-project "$PREFIX-stage"
+oc new-project "$PREFIX-prod"
