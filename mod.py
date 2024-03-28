@@ -1,28 +1,69 @@
-== Installation overview
+#!/bin/bash
 
-Before tapping into the vast array of benefits offered by {ProductShortName}, the initial step involves its installation within your organization. The installation of {ProductShortName} is structured around six key procedures:
+BRANCH="${CI_COMMIT_REF_NAME:-main}"
+OUTPUT_DIR="titles-generated"
+INDEX_FILE="${OUTPUT_DIR}/index.html"
 
-. Creating a GitHub Application
-. Forking the Template Catalog
-. Cloning the Install Repository
-. Creating a `private-values.yaml` file
-. Installing {ProductShortName} on Your selected cluster
-. Accessing {ProductShortName}
+# Ensure the output directory exists
+mkdir -p "${OUTPUT_DIR}/${BRANCH}"
 
+cp -r images/ "${OUTPUT_DIR}/${BRANCH}"
 
-* ClusterAdmin access to an OpenShift Container Platform (OCP) cluster, through both the CLI and the web console.
+# Start of the HTML structure with a top navbar and site title
+cat <<EOF > "${INDEX_FILE}"
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The RHTAP Documentation Site</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body { padding-top: 56px; }
+        .navbar-brand img { height: 30px; }
+        .main-content { padding: 20px; }
+    </style>
+</head>
+<body>
 
-* An instance of Red Hat Advanced Cluster Security, as well as the following values from that instance:
-** ACS API token. You can follow the instructions for the prerequisites link:https://github.com/redhat-appstudio/tssc-sample-pipelines/blob/main/hack/build/README.md#prerequisits[here] to create an API token.
-** ACS central endpoint URL. You can follow the instructions link:https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_security_for_kubernetes/4.1/html/configuring/configure-endpoints#doc-wrapper[here] to configure the endpoint.
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <a class="navbar-brand" href="#">
+        <img src="./${BRANCH}/images/logo.jpeg" alt="Logo"> The RHTAP Documentation Site
+    </a>
+</nav>
 
-* To enable ACS to access private repositories in image registries, ACS will need to be configured for your specific registry
-** For Quay.io, under Integrations->Image Integrations select the Quay.io card
-** Add your OAUTH  tokens to access your specific Quay.io instance
-** Validate the access via the test button. This will ensure if the RHTAP is asked to scan a private image, ACS will have access
+<div class="container main-content">
+    <div class="row">
+        <div class="col-12">
+            <h1>Welcome to The RHTAP Documentation Site</h1>
+            <h4>Select a topic to get started:</h4>
+            <br><br>
+            <a href="./${BRANCH}/release_notes/index.html" class="btn btn-primary">Release Notes</a>
+            <br><br>
+            <a href="./${BRANCH}/install/index.html" class="btn btn-primary">Install RHTAP</a>
+            <br><br>
+            <a href="./${BRANCH}/getting_started/index.html" class="btn btn-primary">Getting Started Guide</a>
+            <br><br>
+            <a href="./${BRANCH}/managing_ec/index.html" class="btn btn-primary">Managing Enterprise Contract</a>
+            <a href="./${BRANCH}/managing_sboms/index.html" class="btn btn-primary">Managing SBOMs</a>
+            <a href="./${BRANCH}/customizing_rhtap/index.html" class="btn btn-primary">Customizing RHTAP</a>
+            
 
-* A Quay.io account
+        </div>
+    </div>
+</div>
 
-* The link:https://helm.sh/docs/intro/install/[Helm] CLI tool
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>
+EOF
 
-* A link:https://github.com/[GitHub] account
+# Process AsciiDoc files to HTML, as previously described
+for t in titles/*/*.adoc; do
+    guide_name=$(basename "$(dirname "$t")")
+    output_subdir="${OUTPUT_DIR}/${BRANCH}/${guide_name}"
+    mkdir -p "${output_subdir}"
+    asciidoctor -b html5 -o "${output_subdir}/index.html" "$t"
+done
