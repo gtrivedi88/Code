@@ -1,3 +1,16 @@
-I really appreciate your kind gesture and the Amazon voucher. And trust me I tried everything I could before informing you about this. The Voucher is from Amazon.com and over here in India we have Amazon.in and hence I'm unable to redeem this voucher :) I did talk to the Amazon customer service team, but as per them they can't help much here.
+My top strengths are:
 
-I'm deeply grateful for this gesture and it means a lot to me. I'd request you to please redeem this voucher in your account before it expires. I'm so humbled by your kindness.
+Execution
+
+Problem solving
+
+Continuous learning
+
+
+
+After delivering OPL (which impacts entire Red Hat), I'd love to add "Strategic" competency to this list as well. Having said that, I'll be enhancing this skill and would take it to next level with OPL phase 2 and RHTAP.
+
+Also, based on my contributions in RHTAP for its first GA, I realised I have more competenties to offer: 
+
+I took many influencial decisions.
+My Getting Started with RHTAP guide offered which I developed keeping "Customer focus" in mind offers a refreshing change as to how we can proceed with GS guides in RHDH.
