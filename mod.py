@@ -1,33 +1,3 @@
-== Unregister or remove your application
+I really appreciate your kind gesture and the Amazon voucher. And trust me I tried everything I could before informing you about this. The Voucher is from Amazon.com and over here in India we have Amazon.in and hence I'm unable to redeem this voucher :) I did talk to the Amazon customer service team, but as per them they can't help much here.
 
-. Navigate to the *Catalog* and select the component that you want to unregister or remove.
-
-. Select vertical three-dot menu associated with the component, and then select *Unregister entity*. A confirmation dialog appears.
-
-+
-image::unregister.png[]
-
-. Select *Unregister Location*.
-
-. Navigate to the *Catalog*, from *Kind* drop-down list select *Resource*, and then unregister the corresponding GitOps resource.
-
-[]
-----
-Unregistering removes the component from your view but it does not delete the application from the cluster.
-----
-
-. To remove the running component from the cluster, run the following command:
-
-[source,bash]
-----
-oc delete application your-app-name-app-of-apps -n rhtap # <1>
-----
-<1> `rhtap` is the default namespace.
-
-. (Optional) To remove the permanently component from the catalog, on the confirmation dialog, select *Advanced* and then select *Delete Entity*.
-
-+
-[NOTE]
-----
-This should only be done if you know that the catalog file has been deleted at, or moved from, its origin location. If that is not the case, the entity will reappear shortly as the next refresh round is performed by the catalog.
-----
+I'm deeply grateful for this gesture and it means a lot to me. I'd request you to please redeem this voucher in your account before it expires. I'm so humbled by your kindness.
