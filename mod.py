@@ -1,11 +1,11 @@
-  File "/usr/lib/python3.12/site-packages/jinja2/loaders.py", line 137, in load
-    code = environment.compile(source, name, filename)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/site-packages/jinja2/environment.py", line 768, in compile
-    self.handle_exception(source=source_hint)
-  File "/usr/lib/python3.12/site-packages/jinja2/environment.py", line 936, in handle_exception
-    raise rewrite_traceback_stack(source=source)
-  File "/home/gtrivedi/git/gitlab/opl-ui/templates/opl/view_search.html", line 58, in template
-    <p class="product-portfolios"><strong>Portfolios:</strong> {{ ', '.join([name for name in
-    ^^^^^^^^^^^^^^^^^^^^^^^^^
-jinja2.exceptions.TemplateSyntaxError: expected token ',', got 'for'
+  File "/home/gtrivedi/.local/lib/python3.12/site-packages/flask/app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/gtrivedi/.local/lib/python3.12/site-packages/flask/app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/gtrivedi/git/gitlab/opl-ui/routes/view_routes.py", line 48, in view_products
+    product['portfolio_names'] = [name for name in product['portfolio_names'] if name]
+                                                   ~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "lib/sqlalchemy/cyextension/resultproxy.pyx", line 48, in sqlalchemy.cyextension.resultproxy.BaseRow.__getitem__
+TypeError: tuple indices must be integers or slices, not str
