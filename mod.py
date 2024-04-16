@@ -1,30 +1,25 @@
-@view_routes.route('/opl/search-to-view-products', methods=['GET', 'POST'])
-def view_products():
-    # Initialize the search form
-    form = SearchForm()
-
-    # Define the base query for products, now including an order by clause
-    products_query = Product.query.order_by(Product.product_name)
-
-    # Filter products based on form data if the form is submitted and valid
-    if form.validate_on_submit():
-        if form.product_name.data:
-            products_query = products_query.filter(Product.product_name.ilike(f"%{form.product_name.data}%"))
-
-        if form.product_status.data and form.product_status.data != 'Select':
-            products_query = products_query.filter(Product.product_status == form.product_status.data)
-
-        if form.product_type.data and form.product_type.data:
-            type_id = form.product_type.data
-            if isinstance(type_id, list):
-                type_id = type_id[0]  # Take the first item if it's a list, adjust according to your needs
-            products_query = products_query.join(ProductTypeMap).join(ProductType).filter(ProductType.type_id == type_id)
-
-    # Get the list of products based on the filtered and now sorted query
-    products = products_query.all()
-
-    # Check if a specific product is selected to display detailed information
-    selected_product_id = request.args.get('product_id')
-    selected_product = Product.query.get(selected_product_id) if selected_product_id else None
-
-    return render_template('opl/view_search.html', form=form, products=products, selected_product=selected_product)
+  File "/home/gtrivedi/.local/lib/python3.12/site-packages/flask/app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/gtrivedi/git/gitlab/opl-ui/routes/view_routes.py", line 47, in view_products
+    return render_template('opl/view_search.html', form=form, products=products, selected_product=selected_product, products_with_portfolios=products_with_portfolios)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/gtrivedi/.local/lib/python3.12/site-packages/flask/templating.py", line 152, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/gtrivedi/.local/lib/python3.12/site-packages/flask/templating.py", line 133, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/site-packages/jinja2/environment.py", line 1301, in render
+    self.environment.handle_exception()
+  File "/usr/lib/python3.12/site-packages/jinja2/environment.py", line 936, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/gtrivedi/git/gitlab/opl-ui/templates/opl/view_search.html", line 1, in top-level template code
+    {% extends 'base.html' %}
+  File "/home/gtrivedi/git/gitlab/opl-ui/templates/base.html", line 10, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/gtrivedi/git/gitlab/opl-ui/templates/opl/view_search.html", line 48, in block 'content'
+    {% for product, portfolio in products_with_portfolios %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: too many values to unpack (expected 2)
