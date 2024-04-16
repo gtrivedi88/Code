@@ -1,4 +1,7 @@
-# Extract category_ids from the portfolio mappings
+# Fetch the associated product portfolios
+    product_portfolios = ProductPortfolioMap.query.filter_by(product_id=product_id).all()
+
+    # Extract category_ids from the portfolio mappings
     category_ids = [portfolio.category_id for portfolio in product_portfolios]
 
     # Fetch the actual portfolios based on the category_ids
