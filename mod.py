@@ -1,1 +1,17 @@
-Give us a few clicks and we'll get you started on an end-to-end DevSecOps CI/CD journey with the {ProductName} ({ProductShortName}). Starting with the Developer Hub, a self-service portal based on Backstage, we streamline and secure your development process from the outset. Once RHTAP is installed and configured, developers can choose an appropriate "ready-to-use" template, fill in the appropriate details and create an application. Once an application is created you can review its code repository (source code and GitOps repositories), and tech docs. Edit the source code and it triggers a pipeline run which ensures every artifact is signed and attested and scans your source-code for vulnerabilities and generates Software Bills of Materials (SBOMs). You can review and fix vulnerabilities and SBOM that details the components, libraries, and dependencies included in the container image.  Additionally, depending on your promotion workflow, you can promote your application from development environment to stage and then from stage to production. This triggers another pipeline run which scans for vulnerabilities and Enterprise contract. The Enterprise Contract ensures container images produced by Red Hat Trusted Application Pipeline meet clearly defined requirements before releasing them to production. Should an image fail to meet these criteria, the EC generates a report outlining the specific issues that need to be addressed.
+== How does it work?
+
+{ProductName} ({ProductShortName}), empowers you to streamline and secure your entire DevSecOps CI/CD process.  This journey begins within {RHDHLongName}, a self-service portal powered by Backstage. Here, you'll find {ProductName} readily available for installation and configuration. With just a few clicks, you can set up {ProductShortName} for your development team.
+
+*Secure Development from the Onset*
+
+Once {ProductShortName} is installed and configured, developers can leverage pre-built, secure templates within {RHDHLongName}. Simply choose the most appropriate ready-to-use software template for your needs, fill in the details, and create a new application. This creates a dedicated development environment that includes everything you need: a code repository (source code and GitOps repositories), technical documentation, and a continuous integration/continuous delivery (CI/CD) pipeline.
+
+*Automated Security Throughout the Pipeline*
+
+Editing the source code triggers a pipeline run within your application. This pipeline ensures every build artifact is signed and attested for authenticity. It also scans for vulnerabilities in your code and automatically generates Software Bills of Materials (SBOMs). These SBOMs detail all components, libraries, and dependencies included in the container image, providing complete transparency into your application's makeup.
+
+*Review, Refine, and Release*
+
+The pipeline presents any identified vulnerabilities for your review and remediation. You can also review the SBOM to gain a deeper understanding of your application's components. Depending on your promotion workflow, you can also promote your application through development, staging, and finally to production. Each promotion triggers another pipeline run, scanning for vulnerabilities and enforcing your Enterprise Contract (EC). The EC ensures container images meet predefined requirements before release. If an image fails this check, the EC generates a report outlining any issues that need resolution.
+
+This streamlined approach with {ProductShortName} empowers developers to focus on innovation while maintaining the highest security standards throughout the development lifecycle.
