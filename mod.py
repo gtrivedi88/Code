@@ -1,161 +1,315 @@
-from flask import Blueprint, render_template, request
-from models import Product
-from sqlalchemy import or_
-from sqlalchemy import func
-from forms import MyForm, SearchForm, EditForm
-from models import db, Product, ProductType, ProductTypeMap, ProductPortfolios, ProductPortfolioMap, ProductNotes, ProductReferences, ProductAlias, ProductMktLife, ProductPartners, Partner, ProductComponents, ProductLog
+from flask_sqlalchemy import SQLAlchemy
+import uuid
 
-view_routes = Blueprint('view_routes', __name__)
+db = SQLAlchemy()
 
-@view_routes.route('/opl/search-to-view-products', methods=['GET', 'POST'])
-def view_products():
-    # Initialize the search form
-    form = SearchForm()
+class Product(db.Model):
+    """
+    Represents a product in the system.
 
-    # Define the base query for products, including the portfolio name
-    products_query = db.session.query(
-        Product.product_id,
-        Product.product_name,
-        Product.product_status,
-        Product.last_updated,
-        func.coalesce(func.array_agg(ProductPortfolios.category_name), ['No Portfolios']).label('portfolio_names'),
-        func.array_agg(func.distinct(ProductType.product_type)).label('product_types')
-    ).outerjoin(ProductPortfolioMap, Product.product_id == ProductPortfolioMap.product_id)\
-      .outerjoin(ProductPortfolios, ProductPortfolioMap.category_id == ProductPortfolios.category_id)\
-      .join(ProductTypeMap, ProductTypeMap.product_id == Product.product_id)\
-      .join(ProductType, ProductTypeMap.type_id == ProductType.type_id)\
-      .outerjoin(ProductAlias, ProductAlias.product_id == Product.product_id)\
-      .group_by(Product.product_id, Product.product_name, Product.product_status, Product.last_updated)\
-      .order_by(Product.product_name)
+    Attributes:
+    - product_id: Unique identifier for the product, generated using UUID.
+    - product_name: Name of the product.
+    - product_description: Description of the product.
+    - upcoming_change: Indicates if there is an upcoming change for the product.
+    - deprecated: Indicates if the product is deprecated.
+    - product_status: Status of the product.
+    - last_updated: Date when the product was last updated.
+    - created: Date when the product was created.
+    - product_status_detail: Additional details about the product status.
+    """
 
-    # Filter products based on form data if the form is submitted and valid
-    if form.validate_on_submit():
+    __tablename__ = 'product'
+    __table_args__ = {'schema': 'brand_opl'}
 
-        if form.product_name.data:
-            search_term = f"%{form.product_name.data}%"
-            products_query = products_query.filter(
-                or_(
-                    Product.product_name.ilike(search_term),
-                    ProductAlias.alias_name.ilike(search_term)
-                )
-            )
+    product_id = db.Column(db.String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    product_name = db.Column(db.String(255), nullable=False)
+    product_description = db.Column(db.String)
+    upcoming_change = db.Column(db.Boolean)
+    deprecated = db.Column(db.Boolean)
+    product_status = db.Column(db.String(255))
+    last_updated = db.Column(db.Date)
+    created = db.Column(db.Date)
+    product_status_detail = db.Column(db.String(255))
 
-        if form.product_status.data and form.product_status.data != 'Select':
-            products_query = products_query.filter(Product.product_status == form.product_status.data)
+    # Relationships
+    components = db.relationship('ProductComponents', back_populates='child_product', foreign_keys='[ProductComponents.component_id]')
+    composed_of = db.relationship('ProductComponents', back_populates='parent_product', foreign_keys='[ProductComponents.product_id]')
 
-        if form.product_type.data and form.product_type.data:
-            type_id = form.product_type.data
-            if isinstance(type_id, list):
-                type_id = type_id[0]  # Take the first item if it's a list, adjust according to your needs
-            products_query = products_query.join(ProductTypeMap).join(ProductType).filter(ProductType.type_id == type_id)
+class ProductType(db.Model):
+    """
+    Represents different types of products.
 
-    # Get the list of products based on the filtered and now sorted query
-    products = products_query.all()
+    Attributes:
+    - type_id: Unique identifier for the product type.
+    - product_type: Type of the product.
+    """
 
-    print(products_query)
-    products_with_portfolios = products_query.all()
-    print(products_with_portfolios)
+    __tablename__ = 'product_types'
+    __table_args__ = {'schema': 'brand_opl'}
 
-    # Convert each tuple to a dictionary for easier access
-    products_with_portfolios = [
-        {
-            'product_id': product[0],
-            'product_name': product[1],
-            'product_status': product[2],
-            'last_updated': product[3],
-            'portfolio_names': product[4],
-            'product_types': product[5]
-        }
-        for product in products_with_portfolios
-    ]
+    type_id = db.Column(db.String, primary_key=True)
+    product_type = db.Column(db.String(255), nullable=False)
 
-    # Preprocess portfolio names to filter out None values
-    for product in products_with_portfolios:
-        product['portfolio_names'] = [name for name in product['portfolio_names'] if name]
+    # Relationships
+    product_types_map = db.relationship('ProductTypeMap', back_populates='product_type')
 
-    # Check if a specific product is selected to display detailed information
-    selected_product_id = request.args.get('product_id')
-    selected_product = Product.query.get(selected_product_id) if selected_product_id else None
+class ProductTypeMap(db.Model):
+    """
+    Represents a many-to-many relationship between Product and ProductType.
 
-    return render_template('opl/view_search.html', form=form, products=products, selected_product=selected_product, products_with_portfolios=products_with_portfolios)
+    Attributes:
+    - product_id: Foreign key to Product.
+    - type_id: Foreign key to ProductType.
+    """
+
+    __tablename__ = 'product_types_map'
+    __table_args__ = {'schema': 'brand_opl'}
+
+    product_id = db.Column(db.String, db.ForeignKey('brand_opl.product.product_id'),primary_key=True)
+    type_id = db.Column(db.String, db.ForeignKey('brand_opl.product_types.type_id'), primary_key=True)
+
+    # Relationships
+    product_type = db.relationship('ProductType', back_populates='product_types_map')
+
+class ProductPortfolios(db.Model):
+    """
+    Represents different portfolios for products.
+
+    Attributes:
+    - category_id: Unique identifier for the product portfolio.
+    - category_name: Name of the product portfolio.
+    """
+
+    __tablename__ = 'product_portfolios'
+    __table_args__ = {'schema': 'brand_opl'}
+    __uuid__ = "category_id"
+    __term__ = "category_name"
+
+    category_id = db.Column(db.String, primary_key=True)
+    category_name = db.Column(db.String(255), nullable=False)
+
+    # Relationships
+    product_portfolio_map = db.relationship('ProductPortfolioMap', backref='product_portfolio', lazy='dynamic')
+
+class ProductPortfolioMap(db.Model):
+    """
+    Represents a many-to-many relationship between Product and ProductPortfolios.
+
+    Attributes:
+    - product_id: Foreign key to Product.
+    - category_id: Foreign key to ProductPortfolios.
+    """
+
+    __tablename__ = 'product_portfolio_map'
+    __table_args__ = {'schema': 'brand_opl'}
+    __uuid__ = "product_id"
+    __term__ = "category_id"
+
+    product_id = db.Column(db.String, db.ForeignKey('brand_opl.product.product_id'), primary_key=True)
+    category_id = db.Column(db.String, db.ForeignKey('brand_opl.product_portfolios.category_id'), primary_key=True)
+
+class ProductNotes(db.Model):
+    """
+    Represents notes associated with a product.
+
+    Attributes:
+    - product_id: Foreign key to Product.
+    - product_note: Note associated with the product.
+    """
+
+    __tablename__ = 'product_notes'
+    __table_args__ = {'schema': 'brand_opl'}
 
 
-# Flask route for resetting the form
-@view_routes.route('/reset-search-form', methods=['GET'])
-def reset_search_form():
-    form = SearchForm()  # Creates a new form instance with default values
-    return render_template('opl/view_search.html', form=form)
+    product_id = db.Column(db.String, db.ForeignKey('brand_opl.product.product_id'), primary_key=True)
+    product_note = db.Column(db.String(65535), nullable=False)
 
-# Route to view detailed information for a specific product
-@view_routes.route('/opl/product/<string:product_id>', methods=['GET'])
-def view_product_details(product_id):
-    # Retrieve the product based on the provided product_id
-    product = Product.query.get_or_404(product_id)
+    # The relationship to the Product model
+    product = db.relationship('Product', backref=db.backref('product_notes', lazy='dynamic'))
 
-    if not product:
-        # Handle the case where the product is not found
-        return render_template('opl/view.html', product=None)
 
-    # Fetch the associated product types
-    product_types = ProductType.query.join(ProductTypeMap).filter_by(product_id=product_id).all()
 
-    # Fetch the associated product portfolios
-    product_portfolios = ProductPortfolioMap.query.filter_by(product_id=product_id).all()
+class ProductReferences(db.Model):
+    """
+    Represents references associated with a product.
 
-    # Extract category_ids from the portfolio mappings
-    category_ids = [portfolio.category_id for portfolio in product_portfolios]
+    Attributes:
+    - product_id: Foreign key to Product.
+    - product_link: Link associated with the product reference.
+    - link_description: Description associated with the product reference.
 
-    # Fetch the actual portfolios based on the category_ids
-    portfolios = ProductPortfolios.query.filter(ProductPortfolios.category_id.in_(category_ids)).all()
+    Relationships:
+    - product: Relationship to Product for easy access to the associated product references.
+    """
 
-    # Get partner choices
-    partner_choices = [(partner.partner_id, partner.partner_name) for partner in Partner.query.all()]
+    __tablename__ = 'product_references'
+    __table_args__ = {'schema': 'brand_opl'}
+    __uuid__ = "product_id"
+    __term__ = "product_link"
 
-    # Get component choices
-    component_choices = [('', 'Select')] + [(component.product_id, component.product_name) for component in Product.query.all()]
+    product_id = db.Column(db.String, db.ForeignKey('brand_opl.product.product_id'), primary_key=True)
+    product_link = db.Column(db.String(65535), nullable=False)
+    link_description = db.Column(db.String(65535), nullable=False)
 
-    # Get product notes
-    product_notes = ProductNotes.query.filter_by(product_id=product_id).first()
+    # The relationship to the Product model
+    product = db.relationship('Product', backref=db.backref('product_references', lazy='dynamic'))
 
-    # Fetch the associated product references
-    product_references = product.product_references.all()
 
-    # Fetch the associated product aliases
-    product_aliases = product.aliases.all()
+class ProductAlias(db.Model):
+    """
+    Represents aliases associated with a product.
 
-    # Fetch the associated product release information
-    product_mkt_life = ProductMktLife.query.filter_by(product_id=product_id).first()
+    Attributes:
+    - alias_id: Unique identifier for the alias.
+    - product_id: Foreign key to Product.
+    - alias_name: Name associated with the alias.
+    - alias_type: Type of the alias (Short, Acronym, Cli, Former).
+    - alias_approved: Indicates if the alias is approved.
+    - previous_name: Indicates if the alias is a previous name.
+    - tech_docs: Indicates if the alias is approved for tech docs.
+    - tech_docs_cli: Indicates if the alias is approved for tech docs code/CLI.
+    - alias_notes: Notes associated with the alias.
 
-    # Fetch the associated product partners
-    product_partners = ProductPartners.query.filter_by(product_id=product_id).all()
+    Relationships:
+    - product: Relationship to Product for easy access to the associated product.
+    """
 
-    # Fetch the associated product components
-    product_components = ProductComponents.query.filter_by(component_id=product_id).all()
+    __tablename__ = 'product_alias'
+    __table_args__ = {'schema': 'brand_opl'}
+    __uuid__ = "alias_id"
+    __term__ = "alias_name"
 
-    # Additional queries to retrieve product names based on component product_id
-    component_product_names = {comp.product_id: Product.query.get(comp.product_id).product_name for comp in product_components}
+    alias_id = db.Column(db.String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    product_id = db.Column(db.String, db.ForeignKey('brand_opl.product.product_id'), nullable=False)
+    alias_name = db.Column(db.String(255), nullable=False)
+    alias_type = db.Column(db.String(255), nullable=False)
+    alias_approved = db.Column(db.Boolean, nullable=True)
+    previous_name = db.Column(db.Boolean, nullable=True)
+    tech_docs = db.Column(db.Boolean, nullable=True)
+    tech_docs_cli = db.Column(db.Boolean, nullable=True)
+    alias_notes = db.Column(db.String(65535))
 
-    # Fetch the associated child components
-    child_components = ProductComponents.query.filter_by(product_id=product_id).all()
+    # The relationship to the Product model
+    product = db.relationship('Product', backref=db.backref('aliases', lazy='dynamic'))
 
-    component_product_name = {comp.component_id: Product.query.get(comp.component_id).product_name for comp in child_components}
 
-    # Fetch the associated product logs
-    product_logs = ProductLog.query.filter_by(product_id=product_id).order_by(ProductLog.edit_date.desc()).all()
-    
-    return render_template('opl/view.html', 
-                           product=product,
-                           product_types=product_types,
-                           portfolios=portfolios,
-                           partner_choices=partner_choices,
-                           component_choices=component_choices,
-                           product_notes=product_notes,
-                           product_references=product_references,
-                           product_aliases=product_aliases,
-                           product_mkt_life=product_mkt_life,
-                           product_partners=product_partners,
-                           product_components=product_components,
-                           child_components=child_components,
-                           component_product_names=component_product_names,
-                           component_product_name=component_product_name,
-                           product_logs=product_logs)
+class ProductMktLife(db.Model):
+    """
+    Represents marketing life information for a product.
+
+    Attributes:
+    - product_id: Foreign key to Product.
+    - product_release: Release date of the product.
+    - product_release_detail: Details about the product release.
+    - product_release_link: Reference link for the product release.
+    - product_eol: End of Life date of the product.
+    - product_eol_detail: Details about the End of Life of the product.
+    - product_eol_link: Reference link for the End of Life of the product.
+
+    Relationships:
+    - product: Relationship to Product for easy access to the associated product.
+    """
+
+    __tablename__ = 'product_mkt_life'
+    __table_args__ = {'schema': 'brand_opl'}
+
+    product_id = db.Column(db.String, db.ForeignKey('brand_opl.product.product_id'), primary_key=True)
+    product_release = db.Column(db.Date, nullable=True)
+    product_release_detail = db.Column(db.String(255))
+    product_release_link = db.Column(db.String(255))
+    product_eol = db.Column(db.Date, nullable=True)
+    product_eol_detail = db.Column(db.String(255))
+    product_eol_link = db.Column(db.String(255))
+
+    # The relationship to the Product model
+    product = db.relationship('Product', backref=db.backref('mkt_life', lazy='dynamic'))
+
+
+class Partner(db.Model):
+    """
+    Represents partners.
+
+    Attributes:
+    - partner_id: Unique identifier for the partner.
+    - partner_name: Name of the partner.
+    - persona_id: Persona ID for the partner.
+    """
+
+    __tablename__ = 'partners'
+    __table_args__ = {'schema': 'brand_opl'}
+    __uuid__ = "partner_id"
+    __term__ = "partner_name"
+
+    partner_id = db.Column(db.String, primary_key=True)
+    partner_name = db.Column(db.String(255), nullable=False)
+
+    # Relationships
+    product_partners = db.relationship('ProductPartners', backref='partner', lazy='dynamic')
+
+class ProductPartners(db.Model):
+    """
+    Represents a many-to-many relationship between Product and Partners.
+
+    Attributes:
+    - product_id: Foreign key to Product.
+    - partner_id: Foreign key to Partners.
+    """
+
+    __tablename__ = 'product_partners'
+    __table_args__ = {'schema': 'brand_opl'}
+    __uuid__ = "product_id"
+    __term__ = "partner_id"
+
+    product_id = db.Column(db.String, db.ForeignKey('brand_opl.product.product_id'), primary_key=True)
+    partner_id = db.Column(db.String, db.ForeignKey('brand_opl.partners.partner_id'), primary_key=True)
+
+
+class ProductComponents(db.Model):
+    """
+    Represents a many-to-many relationship between Product and Components.
+
+    Attributes:
+    - product_id: Foreign key to Product.
+    - component_id: Foreign key to Components.
+    """
+
+    __tablename__ = 'product_components'
+    __table_args__ = {'schema': 'brand_opl'}
+    __uuid__ = "product_id"
+    __term__ = "component_id"
+
+    component_id = db.Column(db.String, db.ForeignKey('brand_opl.product.product_id'), primary_key=True)
+    product_id = db.Column(db.String, db.ForeignKey('brand_opl.product.product_id'), primary_key=True)
+    component_type = db.Column(db.String(255), nullable=False)
+
+    # Relationship back_populates
+    child_product = db.relationship('Product', foreign_keys=[component_id], back_populates='components')
+    parent_product = db.relationship('Product', foreign_keys=[product_id], back_populates='composed_of')
+
+
+class ProductLog(db.Model):
+    """
+    Represents a log of changes made to a product.
+
+    Attributes:
+    - log_id: Unique identifier for the log entry.
+    - product_id: Foreign key to Product.
+    - edit_date: Date when the edit was made.
+    - edit_notes: Notes associated with the edit.
+    - username: Username of the user who made the edit.
+    """
+
+    __tablename__ = 'product_log'
+    __table_args__ = {'schema': 'brand_opl'}
+    __uuid__ = "product_id"
+    __term__ = "edit_date"
+
+    log_id = db.Column(db.String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    product_id = db.Column(db.String, db.ForeignKey('brand_opl.product.product_id'), primary_key=True)
+    edit_date = db.Column(db.Date, nullable=False)
+    edit_notes = db.Column(db.String(65535), nullable=True)
+    username = db.Column(db.String(255), nullable=False)
+
+    # Define the relationship to the Product model
+    product = db.relationship('Product', backref=db.backref('ProductLog', lazy='dynamic'))
