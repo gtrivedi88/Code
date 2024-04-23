@@ -90,3 +90,17 @@
  .alias-table-row:hover {
      background-color: #eaeaea;
  }
+
+.parent-columns {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    
+    }
+
+.notes-columns {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+}
