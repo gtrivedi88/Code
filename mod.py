@@ -1,59 +1,92 @@
-{% if product_logs %}
-    <fieldset class="product-notes-group">
-        <legend>Notes and changelog</legend>
-        <div id="product-notes" class="notes-table">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Notes</th>
-                        <th>Added By</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for product_log in product_logs %}
-                    <tr>
-                        <td>{{ product_log.edit_date.strftime('%Y-%m-%d') }}</td>
-                        <td>{{ product_log.edit_notes }}</td>
-                        <td>{{ product_log.username }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+{% if product_aliases %}
+    <fieldset class="product-alias-section">
+        <legend>Product alias information</legend>
+        <p><b>Note:</b> Always use full product name on first use and whenever clarity is needed. After first use, you may use approved short
+        forms or acronyms. Tech Docs (Technical, customer-facing documentation) refers to non-marketing, non-sales content used
+        to train customers, assist with installation, etc., such as getting started guides, Jira/Bugzilla entries, and support
+        case summaries.</p>
+        <br>
+        <div class="alias-table">
+            <!-- Table Headers -->
+            <div class="alias-table-header">
+                <div class="alias-table-cell"><strong>Alias name</strong></div>
+                <div class="alias-table-cell"><strong>Approved for general use</strong></div>
+                <div class="alias-table-cell"><strong>Previous name</strong></div>
+                <div class="alias-table-cell"><strong>Approved for tech docs</strong></div>
+                <div class="alias-table-cell"><strong>Approved for tech docs code/cli</strong></div>
+                <div class="alias-table-cell"><strong>Alias notes</strong></div>
+            </div>
+            <!-- Each Row Represents a Set of Alias Information -->
+            {% for alias in product_aliases %}
+            <div class="alias-table-row">
+                <div class="alias-table-cell">{{ alias.alias_name }}</div>
+                <div class="alias-table-cell">
+                    {% if alias.alias_approved %}
+                    <strong>Yes</strong>
+                    {% else %}
+                    No
+                    {% endif %}
+                </div>
+                <div class="alias-table-cell">
+                    {% if alias.previous_name %}
+                    <strong>Yes</strong>
+                    {% else %}
+                    No
+                    {% endif %}
+                </div>
+                <div class="alias-table-cell">
+                    {% if alias.tech_docs %}
+                    <strong>Yes</strong>
+                    {% else %}
+                    No
+                    {% endif %}
+                </div>
+                <div class="alias-table-cell">
+                    {% if alias.tech_docs_cli %}
+                    <strong>Yes</strong>
+                    {% else %}
+                    No
+                    {% endif %}
+                </div>
+                <div class="alias-table-cell">{{ alias.alias_notes or "N/A" }}</div>
+            </div>
+            {% endfor %}
         </div>
     </fieldset>
     {% endif %}
 
 
+/* Alias table css */
 
-    /* Log css */
-.notes-table table {
-    width: 100%;
-    border-collapse: collapse;
-}
+ .alias-table {
+     display: table;
+     width: 100%;
+     border-collapse: collapse;
+ }
 
-.notes-table th,
-.notes-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-}
+ .alias-table-header,
+ .alias-table-row {
+     display: table-row;
+ }
 
-.notes-table th {
-    background-color: #f2f2f2;
-}
+ .alias-table-cell {
+     display: table-cell;
+     padding: 8px;
+     border: 1px solid #ddd;
+     text-align: left;
+ }
 
-.notes-table tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
+ .alias-table-header .alias-table-cell,
+ .alias-table-row .alias-table-cell:first-child {
+     font-weight: bold;
+     background-color: #f2f2f2;
+     white-space: nowrap;
+ }
 
-.notes-table tr:hover {
-    background-color: #e8f4ff;
-}
+ .alias-table-row:nth-child(odd) {
+     background-color: #f9f9f9;
+ }
 
-/* last updated date */
-.date-info {
-    text-align: right;
-    padding-right: 50px;
-    
-}
+ .alias-table-row:hover {
+     background-color: #eaeaea;
+ }
