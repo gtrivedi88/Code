@@ -1,15 +1,6 @@
-<!-- Product Partners Information -->
-
-    {% if product_partners %}
-    <fieldset class="product-partner-group">
-        <legend>Product partners information</legend>
-        <label>In Partnership with</label>
-        <div class="listview">
-            <oll>
-                {% for partner in product_partners %}
-                <li>{{ partner.partner.partner_name }}</li>
-                {% endfor %}
-            </oll>
+{% if product_mkt_life.product_eol %}
+        <div class="field-pair">
+            <label>Product end of life (EOL) date</label>
+            <span>{{ product_mkt_life.product_eol }}</span>
         </div>
-    </fieldset>
-    {% endif %}
+        {% endif %}
