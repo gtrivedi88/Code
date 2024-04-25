@@ -1,6 +1,10 @@
-{% if product_mkt_life.product_eol %}
+{% if product.product_notes.first() %}
         <div class="field-pair">
-            <label>Product end of life (EOL) date</label>
-            <span>{{ product_mkt_life.product_eol }}</span>
+            <label>Product notes</label>
+            <span>{{ product.product_notes.first().product_note }}</span>
         </div>
         {% endif %}
+
+
+# Get product notes
+    product_notes = ProductNotes.query.filter_by(product_id=product_id).first()
