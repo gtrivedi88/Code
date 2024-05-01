@@ -1,46 +1,71 @@
-<fieldset class="product-information-group">
-        <legend>Product information</legend>
+<fieldset class="product-reference-group">
+        <legend>Product reference information</legend>
+        <div id="product-references">
+            <div class="product-reference-pair">
+                <div class="form-field">
+                    <label for="{{ form.product_link.id }}">{{ form.product_link.label }}</label>
+                    {{ form.product_link(cols=40) }}
+                </div>
 
-        <div class="form-group">
-            <div class="form-field">
-                <label for="{{ form.product_name.id }}">{{ form.product_name.label }}</label>
-                {{ form.product_name(cols=40) }}
-            </div>
+                <div class="form-field">
+                    <label for="{{ form.link_description.id }}">{{ form.link_description.label }}</label>
+                    {{ form.link_description(cols=40) }}
+                </div>
 
-
-            <div class="form-field">
-                <label for="{{ form.product_type.id }}">{{ form.product_type.label }}</label>
-                <select id="{{ form.product_type.id }}" name="{{ form.product_type.name }}" multiple>
-                    {% for value, label in form.product_type.choices %}
-                    <option value="{{ value }}">{{ label }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-        </div>
-
-
-        <div class="form-group">
-
-            <div class="form-field">
-                <label for="{{ form.product_description.id }}">{{ form.product_description.label }}</label>
-                {{ form.product_description(cols=40) }}
-            </div>
-
-            <div class="form-field">
-                <label for="{{ form.product_portfolio.id }}">{{ form.product_portfolio.label }}</label>
-                <select id="{{ form.product_portfolio.id }}" name="{{ form.product_portfolio.name }}" multiple>
-                    {% for value, label in form.product_portfolio.choices %}
-                    <option value="{{ value }}">{{ label }}</option>
-                    {% endfor %}
-                </select>
+                <div class="form-field buttons-row">
+                    <button type="button" class="remove-reference">Delete</button>
+                </div>
             </div>
         </div>
-
-        <div class="form-group">
-            <div class="form-field">
-                <label for="{{ form.product_notes.id }}">{{ form.product_notes.label }}</label>
-                {{ form.product_notes(cols=40) }}
-            </div>
-        </div>
-
+        <button type="button" class="add-reference">
+            {% if reference_forms %}
+            Add more product reference information
+            {% else %}
+            Add reference information
+            {% endif %}
+        </button>
     </fieldset>
+
+
+
+$(document).ready(function () {
+    // Function to create a new reference pair
+    function createNewReferencePair() {
+        return $(`<div class="product-reference-pair">
+            <div class="form-field">
+                <label>Product reference</label>
+                <textarea name="product_link" cols="40"></textarea>
+            </div>
+            <div class="form-field">
+                <label>Reference description</label>
+                <textarea name="link_description" cols="40"></textarea>
+            </div>
+            <div class="form-field buttons-row">
+                <button type="button" class="remove-reference">Delete</button>
+            </div>
+        </div>`);
+    }
+
+    // Function to update the add-reference button text
+    function updateAddReferenceButtonText() {
+        if ($(".product-reference-pair").length === 0) {
+            $(".add-reference").text("Add product reference information");
+        } else {
+            $(".add-reference").text("Add more product reference information");
+        }
+    }
+
+    updateAddReferenceButtonText();
+
+    $(".add-reference").click(function () {
+        var referencePair = $(".product-reference-pair").length > 0 ? $(".product-reference-pair:first").clone() : createNewReferencePair();
+        referencePair.find("input, textarea").val('');
+        $("#product-references").append(referencePair);
+        updateAddReferenceButtonText();
+    });
+
+    $(document).on("click", ".remove-reference", function () {
+        $(this).closest(".product-reference-pair").remove();
+        updateAddReferenceButtonText();
+    });
+});
