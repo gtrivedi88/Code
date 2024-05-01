@@ -1,71 +1,92 @@
-<fieldset class="product-reference-group">
-        <legend>Product reference information</legend>
-        <div id="product-references">
-            <div class="product-reference-pair">
-                <div class="form-field">
-                    <label for="{{ form.product_link.id }}">{{ form.product_link.label }}</label>
-                    {{ form.product_link(cols=40) }}
-                </div>
+<fieldset class="product-status-group">
+        <legend>Product status information</legend>
+        <div class="form-group">
+            <div class="checkbox-field">
+                {{ form.deprecated() }}
+                <label for="{{ form.deprecated.id }}">{{ form.deprecated.label }}</label>
+            </div>
 
-                <div class="form-field">
-                    <label for="{{ form.link_description.id }}">{{ form.link_description.label }}</label>
-                    {{ form.link_description(cols=40) }}
-                </div>
-
-                <div class="form-field buttons-row">
-                    <button type="button" class="remove-reference">Delete</button>
-                </div>
+            <div class="checkbox-field">
+                {{ form.upcoming_change() }}
+                <label for="{{ form.upcoming_change.id }}">{{ form.upcoming_change.label }}</label>
             </div>
         </div>
-        <button type="button" class="add-reference">
-            {% if reference_forms %}
-            Add more product reference information
-            {% else %}
-            Add reference information
-            {% endif %}
-        </button>
+
+        <br>
+
+        <div class="form-group">
+            <div class="form-field">
+                <label for="{{ form.product_status.id }}">{{ form.product_status.label }}</label>
+                {{ form.product_status(id="status-dropdown", class="status-dropdown") }}
+            </div>
+
+            <div class="form-field">
+                <label for="{{ form.product_status_detail.id }}">{{ form.product_status_detail.label }}</label>
+                {{ form.product_status_detail(id="status-details-dropdown", class="status-details-dropdown") }}
+            </div>
+        </div>
     </fieldset>
 
 
-
 $(document).ready(function () {
-    // Function to create a new reference pair
-    function createNewReferencePair() {
-        return $(`<div class="product-reference-pair">
-            <div class="form-field">
-                <label>Product reference</label>
-                <textarea name="product_link" cols="40"></textarea>
-            </div>
-            <div class="form-field">
-                <label>Reference description</label>
-                <textarea name="link_description" cols="40"></textarea>
-            </div>
-            <div class="form-field buttons-row">
-                <button type="button" class="remove-reference">Delete</button>
-            </div>
-        </div>`);
-    }
+    // Event listener for the change event on the product_status dropdown
+    $('#status-dropdown').on('change', function () {
+        updateStatusDetailsOptions();
+        syncDeprecatedCheckbox();
+    });
 
-    // Function to update the add-reference button text
-    function updateAddReferenceButtonText() {
-        if ($(".product-reference-pair").length === 0) {
-            $(".add-reference").text("Add product reference information");
+    // Event listener for the Deprecated checkbox
+    $('#deprecated').on('change', function() {
+        if ($(this).is(':checked')) {
+            $('#status-dropdown').val('Deprecated');
+            $('#status-details-dropdown').val('Null');
         } else {
-            $(".add-reference").text("Add more product reference information");
+            // Reset to original state when unchecked
+            $('#status-dropdown').val('');
+            $('#status-details-dropdown').val('');
+            $('#status-details-dropdown').find('option').each(function () {
+                $(this).prop('disabled', false);
+            });
         }
-    }
-
-    updateAddReferenceButtonText();
-
-    $(".add-reference").click(function () {
-        var referencePair = $(".product-reference-pair").length > 0 ? $(".product-reference-pair:first").clone() : createNewReferencePair();
-        referencePair.find("input, textarea").val('');
-        $("#product-references").append(referencePair);
-        updateAddReferenceButtonText();
+        updateStatusDetailsOptions();
     });
 
-    $(document).on("click", ".remove-reference", function () {
-        $(this).closest(".product-reference-pair").remove();
-        updateAddReferenceButtonText();
-    });
+    // Initial setup
+    updateStatusDetailsOptions();
 });
+
+function updateStatusDetailsOptions() {
+    var selectedStatus = $('#status-dropdown').val();
+    var statusDetailsDropdown = $('#status-details-dropdown');
+
+    // Disable or enable options based on the selected status
+    if (selectedStatus === 'Available') {
+        // Enable all options for 'Available'
+        statusDetailsDropdown.find('option').each(function () {
+            $(this).prop('disabled', false);
+        });
+     } else if (selectedStatus === 'Deprecated' || selectedStatus === 'Upcoming') {
+        // Disable all options except 'NULL' for 'Deprecated' and 'Upcoming'
+        statusDetailsDropdown.find('option').each(function () {
+            if ($(this).val() !== 'Null' && $(this).val() !== 'Select') { 
+                $(this).prop('disabled', true);
+            }
+        });
+        statusDetailsDropdown.val('Null');
+    } else {
+        // If 'Select' or no value is selected, ensure 'Select' is the default and enable all options
+        statusDetailsDropdown.val('');
+        statusDetailsDropdown.find('option').each(function () {
+            $(this).prop('disabled', false);
+        });
+    }
+}
+
+function syncDeprecatedCheckbox() {
+    var selectedStatus = $('#status-dropdown').val();
+    if (selectedStatus === 'Deprecated') {
+        $('#deprecated').prop('checked', true);
+    } else {
+        $('#deprecated').prop('checked', false);
+    }
+}
