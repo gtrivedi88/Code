@@ -1,62 +1,6 @@
-sudo dnf install docker-ce docker-ce-cli containerd.io
-Docker CE Stable - x86_64                                                                                53 kB/s |  19 kB     00:00    
-Error: 
- Problem: problem with installed package moby-engine-24.0.5-1.fc39.x86_64
-  - package moby-engine-24.0.5-1.fc39.x86_64 from @System conflicts with docker-ce provided by docker-ce-3:24.0.7-1.fc39.x86_64 from docker-ce-stable
-  - package docker-ce-3:24.0.7-1.fc39.x86_64 from docker-ce-stable conflicts with docker provided by moby-engine-24.0.5-1.fc39.x86_64 from @System
-  - package docker-ce-3:24.0.7-1.fc39.x86_64 from docker-ce-stable conflicts with docker provided by moby-engine-24.0.5-1.fc39.x86_64 from fedora
-  - package moby-engine-24.0.5-1.fc39.x86_64 from fedora conflicts with docker-ce provided by docker-ce-3:24.0.7-1.fc39.x86_64 from docker-ce-stable
-  - conflicting requests
-  - package moby-engine-24.0.5-1.fc39.x86_64 from @System conflicts with docker-ce provided by docker-ce-3:24.0.8-1.fc39.x86_64 from docker-ce-stable
-  - package docker-ce-3:24.0.8-1.fc39.x86_64 from docker-ce-stable conflicts with docker provided by moby-engine-24.0.5-1.fc39.x86_64 from @System
-  - package docker-ce-3:24.0.8-1.fc39.x86_64 from docker-ce-stable conflicts with docker provided by moby-engine-24.0.5-1.fc39.x86_64 from fedora
-  - package moby-engine-24.0.5-1.fc39.x86_64 from fedora conflicts with docker-ce provided by docker-ce-3:24.0.8-1.fc39.x86_64 from docker-ce-stable
-  - package moby-engine-24.0.5-1.fc39.x86_64 from @System conflicts with docker-ce provided by docker-ce-3:24.0.9-1.fc39.x86_64 from docker-ce-stable
-  - package docker-ce-3:24.0.9-1.fc39.x86_64 from docker-ce-stable conflicts with docker provided by moby-engine-24.0.5-1.fc39.x86_64 from @System
-  - package docker-ce-3:24.0.9-1.fc39.x86_64 from docker-ce-stable conflicts with docker provided by moby-engine-24.0.5-1.fc39.x86_64 from fedora
-  - package moby-engine-24.0.5-1.fc39.x86_64 from fedora conflicts with docker-ce provided by docker-ce-3:24.0.9-1.fc39.x86_64 from docker-ce-stable
-  - package moby-engine-24.0.5-1.fc39.x86_64 from @System conflicts with docker-ce provided by docker-ce-3:25.0.0-1.fc39.x86_64 from docker-ce-stable
-  - package docker-ce-3:25.0.0-1.fc39.x86_64 from docker-ce-stable conflicts with docker provided by moby-engine-24.0.5-1.fc39.x86_64 from @System
-  - package docker-ce-3:25.0.0-1.fc39.x86_64 from docker-ce-stable conflicts with docker provided by moby-engine-24.0.5-1.fc39.x86_64 from fedora
-  - package moby-engine-24.0.5-1.fc39.x86_64 from fedora conflicts with docker-ce provided by docker-ce-3:25.0.0-1.fc39.x86_64 from docker-ce-stable
-  - package moby-engine-24.0.5-1.fc39.x86_64 from @System conflicts with docker-ce provided by docker-ce-3:25.0.1-1.fc39.x86_64 from docker-ce-stable
-  - package docker-ce-3:25.0.1-1.fc39.x86_64 from docker-ce-stable conflicts with docker provided by moby-engine-24.0.5-1.fc39.x86_64 from @System
-  - package docker-ce-3:25.0.1-1.fc39.x86_64 from docker-ce-stable conflicts with docker provided by moby-engine-24.0.5-1.fc39.x86_64 from fedora
-  - package moby-engine-24.0.5-1.fc39.x86_64 from fedora conflicts with docker-ce provided by docker-ce-3:25.0.1-1.fc39.x86_64 from docker-ce-stable
-  - package moby-engine-24.0.5-1.fc39.x86_64 from @System conflicts with docker-ce provided by docker-ce-3:25.0.2-1.fc39.x86_64 from docker-ce-stable
-  - package docker-ce-3:25.0.2-1.fc39.x86_64 from docker-ce-stable conflicts with docker provided by moby-engine-24.0.5-1.fc39.x86_64 from @System
-  - package docker-ce-3:25.0.2-1.fc39.x86_64 from docker-ce-stable conflicts with docker provided by moby-engine-24.0.5-1.fc39.x86_64 from fedora
-  - package moby-engine-24.0.5-1.fc39.x86_64 from fedora conflicts with docker-ce provided by docker-ce-3:25.0.2-1.fc39.x86_64 from docker-ce-stable
-  - package moby-engine-24.0.5-1.fc39.x86_64 from @System conflicts with docker-ce provided by docker-ce-3:25.0.3-1.fc39.x86_64 from docker-ce-stable
-  - package docker-ce-3:25.0.3-1.fc39.x86_64 from docker-ce-stable conflicts with docker provided by moby-engine-24.0.5-1.fc39.x86_64 from @System
-  - package docker-ce-3:25.0.3-1.fc39.x86_64 from docker-ce-stable conflicts with docker provided by moby-engine-24.0.5-1.fc39.x86_64 from fedora
-  - package moby-engine-24.0.5-1.fc39.x86_64 from fedora conflicts with docker-ce provided by docker-ce-3:25.0.3-1.fc39.x86_64 from docker-ce-stable
-  - package moby-engine-24.0.5-1.fc39.x86_64 from @System conflicts with docker-ce provided by docker-ce-3:25.0.4-1.fc39.x86_64 from docker-ce-stable
-  - package docker-ce-3:25.0.4-1.fc39.x86_64 from docker-ce-stable conflicts with docker provided by moby-engine-24.0.5-1.fc39.x86_64 from @System
-  - package docker-ce-3:25.0.4-1.fc39.x86_64 from docker-ce-stable conflicts with docker provided by moby-engine-24.0.5-1.fc39.x86_64 from fedora
-  - package moby-engine-24.0.5-1.fc39.x86_64 from fedora conflicts with docker-ce provided by docker-ce-3:25.0.4-1.fc39.x86_64 from docker-ce-stable
-  - package moby-engine-24.0.5-1.fc39.x86_64 from @System conflicts with docker-ce provided by docker-ce-3:25.0.5-1.fc39.x86_64 from docker-ce-stable
-  - package docker-ce-3:25.0.5-1.fc39.x86_64 from docker-ce-stable conflicts with docker provided by moby-engine-24.0.5-1.fc39.x86_64 from @System
-  - package docker-ce-3:25.0.5-1.fc39.x86_64 from docker-ce-stable conflicts with docker provided by moby-engine-24.0.5-1.fc39.x86_64 from fedora
-  - package moby-engine-24.0.5-1.fc39.x86_64 from fedora conflicts with docker-ce provided by docker-ce-3:25.0.5-1.fc39.x86_64 from docker-ce-stable
-  - package moby-engine-24.0.5-1.fc39.x86_64 from @System conflicts with docker-ce provided by docker-ce-3:26.0.0-1.fc39.x86_64 from docker-ce-stable
-  - package docker-ce-3:26.0.0-1.fc39.x86_64 from docker-ce-stable conflicts with docker provided by moby-engine-24.0.5-1.fc39.x86_64 from @System
-  - package docker-ce-3:26.0.0-1.fc39.x86_64 from docker-ce-stable conflicts with docker provided by moby-engine-24.0.5-1.fc39.x86_64 from fedora
-  - package moby-engine-24.0.5-1.fc39.x86_64 from fedora conflicts with docker-ce provided by docker-ce-3:26.0.0-1.fc39.x86_64 from docker-ce-stable
-  - package moby-engine-24.0.5-1.fc39.x86_64 from @System conflicts with docker-ce provided by docker-ce-3:26.0.1-1.fc39.x86_64 from docker-ce-stable
-  - package docker-ce-3:26.0.1-1.fc39.x86_64 from docker-ce-stable conflicts with docker provided by moby-engine-24.0.5-1.fc39.x86_64 from @System
-  - package docker-ce-3:26.0.1-1.fc39.x86_64 from docker-ce-stable conflicts with docker provided by moby-engine-24.0.5-1.fc39.x86_64 from fedora
-  - package moby-engine-24.0.5-1.fc39.x86_64 from fedora conflicts with docker-ce provided by docker-ce-3:26.0.1-1.fc39.x86_64 from docker-ce-stable
-  - package moby-engine-24.0.5-1.fc39.x86_64 from @System conflicts with docker-ce provided by docker-ce-3:26.0.2-1.fc39.x86_64 from docker-ce-stable
-  - package docker-ce-3:26.0.2-1.fc39.x86_64 from docker-ce-stable conflicts with docker provided by moby-engine-24.0.5-1.fc39.x86_64 from @System
-  - package docker-ce-3:26.0.2-1.fc39.x86_64 from docker-ce-stable conflicts with docker provided by moby-engine-24.0.5-1.fc39.x86_64 from fedora
-  - package moby-engine-24.0.5-1.fc39.x86_64 from fedora conflicts with docker-ce provided by docker-ce-3:26.0.2-1.fc39.x86_64 from docker-ce-stable
-  - package moby-engine-24.0.5-1.fc39.x86_64 from @System conflicts with docker-ce provided by docker-ce-3:26.1.0-1.fc39.x86_64 from docker-ce-stable
-  - package docker-ce-3:26.1.0-1.fc39.x86_64 from docker-ce-stable conflicts with docker provided by moby-engine-24.0.5-1.fc39.x86_64 from @System
-  - package docker-ce-3:26.1.0-1.fc39.x86_64 from docker-ce-stable conflicts with docker provided by moby-engine-24.0.5-1.fc39.x86_64 from fedora
-  - package moby-engine-24.0.5-1.fc39.x86_64 from fedora conflicts with docker-ce provided by docker-ce-3:26.1.0-1.fc39.x86_64 from docker-ce-stable
-  - package moby-engine-24.0.5-1.fc39.x86_64 from @System conflicts with docker-ce provided by docker-ce-3:26.1.1-1.fc39.x86_64 from docker-ce-stable
-  - package docker-ce-3:26.1.1-1.fc39.x86_64 from docker-ce-stable conflicts with docker provided by moby-engine-24.0.5-1.fc39.x86_64 from @System
-  - package docker-ce-3:26.1.1-1.fc39.x86_64 from docker-ce-stable conflicts with docker provided by moby-engine-24.0.5-1.fc39.x86_64 from fedora
-  - package moby-engine-24.0.5-1.fc39.x86_64 from fedora conflicts with docker-ce provided by docker-ce-3:26.1.1-1.fc39.x86_64 from docker-ce-stable
-(try to add '--allowerasing' to command line to replace conflicting packages or '--skip-broken' to skip uninstallable packages)
+ gtrivedi@gtrivedi-thinkpadt14sgen1  ~  go install sigs.k8s.io/kind@v0.22.0
+ gtrivedi@gtrivedi-thinkpadt14sgen1  ~  kind version
+bash: kind: command not found
+ ✘ gtrivedi@gtrivedi-thinkpadt14sgen1  ~  go install sigs.k8s.io/kind@v0.22.0
+ gtrivedi@gtrivedi-thinkpadt14sgen1  ~  go install sigs.k8s.io/kind@v0.22.0
+ gtrivedi@gtrivedi-thinkpadt14sgen1  ~  kind create cluster
