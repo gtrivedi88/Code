@@ -1,3 +1,13 @@
-kind create cluster
-ERROR: failed to create cluster: failed to list nodes: command "docker ps -a --filter label=io.x-k8s.kind.cluster=kind --format '{{.Names}}'" failed with error: exit status 1
-Command Output: permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get "http://%2Fvar%2Frun%2Fdocker.sock/v1.24/containers/json?all=1&filters=%7B%22label%22%3A%7B%22io.x-k8s.kind.cluster%3Dkind%22%3Atrue%7D%7D": dial unix /var/run/docker.sock: connect: permission denied
+./local-build.sh
+[19:58:16.082] FATAL (antora): playbook file not found at /home/gtrivedi/git/github/konflux-docs/preview.JmucT0m0dU.yml (cwd: /home/gtrivedi/git/github/konflux-docs, playbook: preview.JmucT0m0dU.yml)
+    Cause: Error
+        at buildPlaybook (/home/gtrivedi/git/github/konflux-docs/node_modules/@antora/playbook-builder/lib/build-playbook.js:37:15)
+        at Command.<anonymous> (/home/gtrivedi/git/github/konflux-docs/node_modules/@antora/cli/lib/cli.js:129:18)
+        at Command.listener [as _actionHandler] (/home/gtrivedi/git/github/konflux-docs/node_modules/commander/lib/command.js:482:17)
+        at /home/gtrivedi/git/github/konflux-docs/node_modules/commander/lib/command.js:1283:65
+        at Command._chainOrCall (/home/gtrivedi/git/github/konflux-docs/node_modules/commander/lib/command.js:1177:12)
+        at Command._parseCommand (/home/gtrivedi/git/github/konflux-docs/node_modules/commander/lib/command.js:1283:27)
+        at /home/gtrivedi/git/github/konflux-docs/node_modules/commander/lib/command.js:1081:27
+        at Command._chainOrCall (/home/gtrivedi/git/github/konflux-docs/node_modules/commander/lib/command.js:1177:12)
+        at Command._dispatchSubcommand (/home/gtrivedi/git/github/konflux-docs/node_modules/commander/lib/command.js:1077:23)
+        at Command._parseCommand (/home/gtrivedi/git/github/konflux-docs/node_modules/commander/lib/command.js:1248:19)
