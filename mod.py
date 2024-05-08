@@ -1,3 +1,10 @@
+"Why Konflux"
+
+Notes
+Focus on supply chain security
+Enable customization while still ensuring that builds achieve a minimum bar
+Recognition that artifacts may have different gating criteria depending on the destination; build once, release as many times as appropriate
+
 Konflux
 Overview
 Konflux is a platform for building integrated software that streamlines, consolidates, and secures the development lifecycle.
