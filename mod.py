@@ -1,34 +1,35 @@
-<fieldset class="pf-v5-c-form pf-m-horizontal">
-        <legend class="pf-v5-c-title">Product Reference Information</legend>
-        <div id="product-references" class="pf-v5-l-grid pf-m-gutter">
-            <div class="pf-v5-l-grid__item pf-m-6-col">
-                <label class="pf-v5-c-form__label">
-                    <span class="pf-v5-c-form__label-text">Product Reference</span>
-                </label>
-            </div>
-            <div class="pf-v5-l-grid__item pf-m-6-col">
-                <label class="pf-v5-c-form__label">
-                    <span class="pf-v5-c-form__label-text">Reference Description</span>
-                </label>
-            </div>
-    
-            {% for reference in product_references %}
-            <div class="pf-v5-l-grid__item pf-m-6-col">
-                {% if reference.product_link %}
-                <div class="pf-v5-c-form__field">
-                    <span class="pf-v5-c-form__control">
-                        <a href="{{ reference.product_link }}" target="_blank">{{ reference.product_link }}</a>
-                    </span>
-                </div>
-                {% endif %}
-            </div>
-            <div class="pf-v5-l-grid__item pf-m-6-col">
-                {% if reference.link_description %}
-                <div class="pf-v5-c-form__field">
-                    <span class="pf-v5-c-form__control">{{ reference.link_description }}</span>
-                </div>
-                {% endif %}
-            </div>
-            {% endfor %}
+<div class="tile-container">
+    <!-- View Product Card -->
+    <div class="card">
+        <img src="{{ url_for('static', filename='/images/view_product.png') }}" class="card-img-top" alt="View Product">
+        <div class="card-body">
+            <h4 class="card-title">View Product</h4>
+            <p class="card-text">Explore the list of products.</p>
+            <a href="opl/search-to-view-products" class="btn">View</a>
         </div>
-    </fieldset>
+    </div>
+
+    {% if "/opl-editor" in needs.group %}
+    <!-- Edit Product Card -->
+    <div class="card">
+        <img src="{{ url_for('static', filename='/images/edit_product.png') }}" class="card-img-top" alt="Edit Product">
+        <div class="card-body">
+            <h4 class="card-title">Edit Product</h4>
+            <p class="card-text">Modify existing product details.</p>
+            <a href="opl/search-to-edit-products" class="btn">Edit</a>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if "/opl-editor" in needs.group %}
+    <!-- Add Product Card -->
+    <div class="card">
+        <img src="{{ url_for('static', filename='/images/add_product.png') }}" class="card-img-top" alt="Add Product">
+        <div class="card-body">
+            <h4 class="card-title">Add Product</h4>
+            <p class="card-text">Introduce a new product to the list.</p>
+            <a href="opl/add-product" class="btn">Add</a>
+        </div>
+    </div>
+    {% endif %}
+</div>
