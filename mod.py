@@ -1,108 +1,56 @@
-{% if product_aliases %}
-    <fieldset class="product-alias-section">
-        <legend>Product alias information</legend>
-        <p><b>Note:</b> Always use full product name on first use and whenever clarity is needed. After first use, you may use approved short
-        forms or acronyms. Tech Docs (Technical, customer-facing documentation) refers to non-marketing, non-sales content used
-        to train customers, assist with installation, etc., such as getting started guides, Jira/Bugzilla entries, and support
-        case summaries.</p>
-        <br>
-        <div class="alias-table">
-            <!-- Table Headers -->
-            <div class="alias-table-header">
-                <div class="alias-table-cell"><strong>Alias name</strong></div>
-                <div class="alias-table-cell"><strong>Approved for general use</strong></div>
-                <div class="alias-table-cell"><strong>Previous name</strong></div>
-                <div class="alias-table-cell"><strong>Approved for tech docs</strong></div>
-                <div class="alias-table-cell"><strong>Approved for tech docs code/cli</strong></div>
-                <div class="alias-table-cell"><strong>Alias notes</strong></div>
-            </div>
-            <!-- Each Row Represents a Set of Alias Information -->
-            {% for alias in product_aliases %}
-            <div class="alias-table-row">
-                <div class="alias-table-cell">{{ alias.alias_name }}</div>
-                <div class="alias-table-cell">
-                    {% if alias.alias_approved %}
-                    <strong>Yes</strong>
-                    {% else %}
-                    No
-                    {% endif %}
-                </div>
-                <div class="alias-table-cell">
-                    {% if alias.previous_name %}
-                    <strong>Yes</strong>
-                    {% else %}
-                    No
-                    {% endif %}
-                </div>
-                <div class="alias-table-cell">
-                    {% if alias.tech_docs %}
-                    <strong>Yes</strong>
-                    {% else %}
-                    No
-                    {% endif %}
-                </div>
-                <div class="alias-table-cell">
-                    {% if alias.tech_docs_cli %}
-                    <strong>Yes</strong>
-                    {% else %}
-                    No
-                    {% endif %}
-                </div>
-                <div class="alias-table-cell">{{ alias.alias_notes or "N/A" }}</div>
-            </div>
-            {% endfor %}
+<!-- Product Release Information -->
+
+    {% if product_mkt_life.product_release or product_mkt_life.product_release_detail or
+    product_mkt_life.product_release_link %}
+    <fieldset class="product-release-info">
+        <legend>Product release information</legend>
+        {% if product_mkt_life.product_release %}
+        <div class="field-pair">
+            <label>Release date</label>
+            <span>{{ product_mkt_life.product_release.strftime('%m-%d-%Y') }}</span>
         </div>
+        {% endif %}
+
+        {% if product_mkt_life.product_release_detail %}
+        <div class="field-pair">
+            <label>Release detail</label>
+            <span>{{ product_mkt_life.product_release_detail }}</span>
+        </div>
+        {% endif %}
+
+        {% if product_mkt_life.product_release_link %}
+        <div class="field-pair">
+            <label>Release reference</label>
+            <span><a href="{{ product_mkt_life.product_release_link }}" target="_blank">{{ product_mkt_life.product_release_link }}</a></span>
+        </div>
+        {% endif %}
     </fieldset>
     {% endif %}
 
-/* Alias table css */
+    <!-- Product EOL Information -->
 
-.alias-table {
-    display: block;
-    width: 100%;
-    max-width: 100%;
-    overflow-x: auto;
-    border-collapse: collapse;
-    white-space: wrap;
-    
-}
+    {% if product_mkt_life.product_eol or product_mkt_life.product_eol_detail or product_mkt_life.product_eol_link %}
+    <fieldset class="product-eol-info">
+        <legend>Product end of life information</legend>
+        {% if product_mkt_life.product_eol %}
+        <div class="field-pair">
+            <label>Product end of life (EOL) date</label>
+            <span>{{ product_mkt_life.product_eol.strftime('%m-%d-%Y') }}</span>
+        </div>
+        {% endif %}
 
-.alias-table-header,
-.alias-table-row {
-    display: table;
-    width: 100%;
-    table-layout: fixed;
-    
-}
+        {% if product_mkt_life.product_eol_detail %}
+        <div class="field-pair">
+            <label>Product end of life (EOL) details</label>
+            <span>{{ product_mkt_life.product_eol_detail }}</span>
+        </div>
+        {% endif %}
 
-.alias-table-cell {
-    display: table-cell;
-    padding: 8px;
-    border: 1px solid #ddd;
-    text-align: left;
-    word-wrap: break-word !important;
-    hyphens: auto;
-    
-}
-
-.alias-table-header .alias-table-cell,
-.alias-table-row .alias-table-cell:first-child {
-    font-weight: bold;
-    background-color: #f2f2f2;
-    
-}
-
-.alias-table-row:nth-child(odd) {
-    background-color: #f9f9f9;
-}
-
-.alias-table-row:hover {
-    background-color: #eaeaea;
-}
-
-.parent-columns,
-.notes-columns {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-}
+        {% if product_mkt_life.product_eol_link %}
+        <div class="field-pair">
+            <label>Product end of life (EOL) reference</label>
+            <span><a href="{{ product_mkt_life.product_eol_link }}" target="_blank">{{ product_mkt_life.product_eol_link }}</a></span>
+        </div>
+        {% endif %}
+    </fieldset>
+    {% endif %}
