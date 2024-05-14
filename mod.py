@@ -1,2 +1,4 @@
-<a href="{{ url_for('view_routes.view_products') }}" class="button-link">View more products</a> <a href="{{ url_for('edit_routes.edit_product_details', product_id=product.product_id) }}" class="button-link">Edit this
-    product</a>
+<div class="date-info">
+        <b>Product created on:</b> {{ product.created.strftime('%B %d, %Y') }} <br>
+        <b>Product last updated on:</b> {{ product.last_updated.strftime('%B %d, %Y') }}
+    </div>
