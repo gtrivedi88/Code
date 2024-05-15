@@ -1,1 +1,1 @@
-Note: this command is only to verify that a re-triggered integration pipelineRun is started. If it's run a long time after the re-trigger command, it may not show any output since pipelineRun resources are pruned after completion. Additionally, the command may show other, unrelated pipelineRuns that are in flight at that same time.
+The easiest way to start a new component build is to either open a new PR in the GitHub repository that targets the component's tracked branch or comment "/retest" on an existing PR.
