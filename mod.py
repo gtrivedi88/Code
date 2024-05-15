@@ -1,3 +1,2 @@
-While {ProductName} offers a powerful UI, users may also want to access the platform through the `kubectl` command line interface (CLI). For users to gain this access, a Platform Engineer (PE) must first configure their instance of {ProductName} to support CLI access. They must also draft a template `kubeconfig` file for their organization. Afterwards, users can edit that template to create a `kubeconfig` file specific to themselves. Then, they use that file to gain access to {ProductName} through the CLI. 
-
-You have an up-to-date kubectl binary.  Alternatively, the `oc` binary is also compatible.
+Identify the IntegrationTestScenario that needs to be rerun.  For a given snapshot, you can only rerun one IntegrationTestScenario. The related Snapshot can be found in the pipelineRun details page in the UI, e.g.
+ <imabe>
