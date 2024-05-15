@@ -1,2 +1,1 @@
-Identify the IntegrationTestScenario that needs to be rerun.  For a given snapshot, you can only rerun one IntegrationTestScenario. The related Snapshot can be found in the pipelineRun details page in the UI, e.g.
- <imabe>
+Note: this command is only to verify that a re-triggered integration pipelineRun is started. If it's run a long time after the re-trigger command, it may not show any output since pipelineRun resources are pruned after completion. Additionally, the command may show other, unrelated pipelineRuns that are in flight at that same time.
