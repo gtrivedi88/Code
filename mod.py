@@ -1,6 +1,1 @@
-home/gtrivedi/.gnupg/pubring.kbx
----------------------------------
-sec   ed25519/C9E9A2FA72B877B3 2024-05-16 [SC]
-      101E03F1A11729950A68FF48C9E9A2FA72B877B3
-uid                 [ultimate] Gaurav Trivedi <gtrivedi@redhat.com>
-ssb   cv25519/5E1304F2995D41F5 2024-05-16 [E]
+If you want to define a large application with many components, easily duplicate or update components, or ensure consistent component and application states, you may want to configure your Konflux applications and components as code through Kustomize. This document provides an overview of a basic application and component configuration that can be replicated and duplicated using Kustomize bases and overlays. You can learn more about Kustomize at the following link: https://kustomize.io/[here]. This document is based on the configuration defined in the following repository: https://github.com/konflux-ci/casc-gpt[this repository]. You can see the configuration first-hand there.
