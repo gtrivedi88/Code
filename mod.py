@@ -1,19 +1,10 @@
-= Build-time tests
+= Enabling a Snyk task
 
-This document covers the build-time tests (formerly known as "sanity tests") that {ProductName} runs as part of its component build pipeline. These build-time tests automatically check all application images to ensure that they're up-to-date, correctly formatted, and protected from security vulnerabilities.
+While a Snky test is available to run a build time in the default pipelines, additional configuration is needed to enable the test. This is an example of a build-time test that requires the configuration of a custom secret to be able to run.
 
-The {ProductName} component build pipeline supports several types build-time tests. The build-time tests used in {ProductName} are run in the form of https://tekton.dev/docs/pipelines/tasks/#overview[Tekton tasks]. The utility used for validating container information is https://www.conftest.dev/[Conftest]. The following tables show the currently implemented build-time tests:
+The `sast-snyk-check` task uses the Snyk Code tool to perform static application security testing (SAST). 
+Specifically, the Snyk check scans an application's source code for potential security vulnerabilities, 
+including SQL injection, cross-site scripting (XSS), and code injection attack vulnerabilities.
 
-.Deprecated image checks
-|===
-|Test name |Description |Failure message
-
-|image_repository_deprecated |Deprecated images are no longer maintained, leading to unresolved security vulnerabilities. | The container image must not be built from a repository  marked as 'Deprecated' in COMET
-|===
-
-.Unsigned RPM check
-|===
-|Test name |Description |Failure message
-
-|image_unsigned_rpms |Packages signed with Red Hat's secure signing server adheres to stringent policies and procedures. |All RPMs in the image must be signed. Found following unsigned rpms(nvra):
-|===
+NOTE: You can run a Snyk task only if you have a Snyk token stored in a namespace secret. 
+You should also include the name of your secret in the *snyk-secret* pipeline parameter.
