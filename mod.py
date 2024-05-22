@@ -1,3 +1,2 @@
-WARNING: If you delete an application permanently, you delete all the components and resources from the user interface (UI) and upstream repositories.
-What resources are contained in upstream repositories? I guess that the deletion submits a PR to delete the tekton pipleine definitions. Is that what you were referring to?
-
+This document covers the build-time tests that {ProductName} runs as part of its component build pipeline. These build-time tests automatically check all application images to ensure that they're up-to-date, correctly formatted, and protected from security vulnerabilities.
+Nit: the out-of-the-box tests don't "ensure" as much as they "inform" since the tasks are non-blocking/failing.
