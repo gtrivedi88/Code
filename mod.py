@@ -1,2 +1,10 @@
-This document covers the build-time tests that {ProductName} runs as part of its component build pipeline. These build-time tests automatically check all application images to ensure that they're up-to-date, correctly formatted, and protected from security vulnerabilities.
-Nit: the out-of-the-box tests don't "ensure" as much as they "inform" since the tasks are non-blocking/failing.
+You can disable the default build-time tests by configuring the default parameter to `false`
+
+[source,yaml]
+----
+- description: Skip checks against built image
+  name: skip-checks
+  type: string
+  default: "false"
+----
+ 
