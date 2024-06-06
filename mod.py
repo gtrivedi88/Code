@@ -1,3 +1,8 @@
+[2024-06-06 13:31:03,955] ERROR in app: Exception on /opl/search-to-view-products [GET]
+Traceback (most recent call last):
+  File "/home/gtrivedi/.local/lib/python3.12/site-packages/sqlalchemy/sql/elements.py", line 1599, in __getattr__
+    return getattr(self.comparator, key)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 AttributeError: 'Comparator' object has no attribute 'filter'
 
 The above exception was the direct cause of the following exception:
