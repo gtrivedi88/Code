@@ -1,5 +1,1 @@
-+
-[NOTE]
-====
-You must set up OpenShift Pipelines in the web console to view Software Supply Chain Security elements. For information on setting up OpenShift Pipelines in the web console to view Software Supply Chain Security elements, refer link[ setting up OpenShift Pipelines in the web console to view Software Supply Chain Security elements]
-====
+Thank you for your promptness we were able to update our docs for more information immediately. You not only created the created the ticket but also follwed up on the ticket status which shows your due diligence to help our user. I really appreciate our collaboration on this.
