@@ -1,6 +1,1 @@
-So here is a Joke (sort of)
-After all the hard work, it seems that we no longer need to update the RHDH docs. Reason - The update was need to cover this use case: By default, a user in RHDH will see no data in the Vulnerability column and Output icons. To see the data, the user has to either subscribe to RHTAP or manually configure some settings. This doc talked about those manual settings.
-
-Now RHDH dev team considers it a BUG. They no longer want to show the empty Vulnerabilities column. A must subscribe to RHTAP.
-
-Getting confirmation on this question: How would a user know that they have to subscribe to RHTAP from RHDH docs?
+Recently three lecturers from the University of Glasgow published a paper titled ChatGPT is Bullshit. It's a very interesting academic article and well-worth a read, but the TL;DR is the authors say that ChatGPT and other LLMs have no concern for truth because they have no real underlying understanding of the input and output they process. They also argue that labelling false output as "hallucinations" is misrepresentative as it gives the impression that an LLM has an understanding about our world. 
