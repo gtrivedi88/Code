@@ -2,7 +2,8 @@
   <div class="pf-v5-c-masthead__main pf-v5-l-flex pf-m-align-items-center">
     <div class="pf-v5-c-masthead__brand pf-v5-l-flex pf-m-align-items-center">
       <a href="{{ url_for('home') }}" style="display: flex; align-items: center; text-decoration: none;">
-        <img src="{{ url_for('static', filename='images/red-hat-logo.svg') }}" alt="Red Hat Logo" />        
+        <img src="{{ url_for('static', filename='images/red-hat-logo.svg') }}" alt="Red Hat Logo"
+          style="height: 42px; width: 269px; margin-right: 10px;" />
       </a>
     </div>
   </div>
