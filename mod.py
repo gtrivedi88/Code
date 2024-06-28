@@ -1,20 +1,13 @@
-Traceback (most recent call last):
-  File "/home/gtrivedi/.local/lib/python3.12/site-packages/flask/app.py", line 1455, in wsgi_app
-    response = self.full_dispatch_request()
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/gtrivedi/.local/lib/python3.12/site-packages/flask/app.py", line 869, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/gtrivedi/.local/lib/python3.12/site-packages/flask/app.py", line 867, in full_dispatch_request
-    rv = self.dispatch_request()
-         ^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/gtrivedi/.local/lib/python3.12/site-packages/flask/app.py", line 852, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/gtrivedi/.local/lib/python3.12/site-packages/flask_principal.py", line 199, in _decorated
-    rv = f(*args, **kw)
-         ^^^^^^^^^^^^^^
-  File "/home/gtrivedi/git/gitlab/opl-ui/routes/edit_routes.py", line 158, in edit_product_details
-    if product_mkt_life is None:
-       ^^^^^^^^^^^^^^^^
-UnboundLocalError: cannot access local variable 'product_mkt_life' where it is not associated with a value
+127.0.0.1 - - [29/Jun/2024 01:34:40] "GET /static/css/assets/fonts/RedHatDisplay/RedHatDisplay-Medium.woff2 HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jun/2024 01:34:40] "GET /static/css/assets/fonts/RedHatText/RedHatText-Medium.woff2 HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jun/2024 01:34:40] "GET /static/css/assets/fonts/RedHatDisplay/RedHatDisplay-Bold.woff2 HTTP/1.1" 200 -
+Route accessed with method: POST
+POST request received
+Form data: ImmutableMultiDict([('csrf_token', 'IjI4NzMwMjMwMGQ5ZDFhNzIxMTMyOTg1Yjk2MTk4MjJhNGQ2MzIwYmYi.Zn8XVg.3aaEzuLkq8SZCWeo94fVO_y70CQ'), ('product_name', '3scale Backstage provider '), ('product_type', 'cec70d55-aed5-44c7-a8db-7da271288ebe'), ('product_type', '9324088d-44d6-4ca9-8011-887df6756500'), ('product_description', 'sdasdasdsdasdasdasd'), ('product_portfolio', '569de932-3061-4917-832c-ae75e082feaf'), ('product_portfolio', 'acbfe7c2-7801-41cb-8f8d-70c20ecb9d6c'), ('product_note', 'zxzxasdasd'), ('product_link', 'ASDAsAS'), ('product_link', 'asdfasd'), ('link_description', 'AsASAS'), ('link_description', 'asdasd'), ('deprecated', 'y'), ('upcoming_change', 'y'), ('product_status', 'Deprecated'), ('product_status_detail', 'Null'), ('alias_name_5ada3919-f44e-4e93-a51f-f33ab652c00f', 'Fond'), ('alias_notes_5ada3919-f44e-4e93-a51f-f33ab652c00f', ' sde    asdasdasd   asdasdasdasd         '), ('alias_type_5ada3919-f44e-4e93-a51f-f33ab652c00f', 'Acronym'), ('tech_docs_5ada3919-f44e-4e93-a51f-f33ab652c00f', 'on'), ('alias_name_PLACEHOLDER', ''), ('alias_notes_PLACEHOLDER', ' '), ('alias_type_PLACEHOLDER', 'Short'), ('product_release', '2023-11-06'), ('product_release_detail', 'Technology Preview'), ('product_release_link', 'https://www.redhat.com/en/about/press-releases/red-hat-expands-contribution-backstage-project-new-plug-ins'), ('product_eol', '2024-06-27'), ('product_eol_detail', 'aswedasd'), ('product_eol_link', 'asdasd'), ('partner', '807421dd-1675-40e5-9013-9d4d1532c4b4'), ('partner', 'b9e309da-1ef2-4fb9-a982-c578e7253da9'), ('partner', 'd91c472b-6a7b-4168-9169-d498449dc591'), ('product_id[]', '2fda7302-16fc-4186-b119-6d5c83f8c3c4'), ('product_id[]', ''), ('component_type[]', 'variant'), ('component_type[]', ''), ('existing_log_id', 'bf3bd998-e15f-4ba3-ac6e-3083dd89841d'), ('existing_log_id', '2c0a750c-9cc2-4991-9b39-25854038d1d1'), ('existing_log_id', '4777a92f-1320-4758-b8f8-590fbc10d7d5'), ('edit_notes_bf3bd998-e15f-4ba3-ac6e-3083dd89841d', 'Updated parent product to Red Hat Developer Hub'), ('edit_date_bf3bd998-e15f-4ba3-ac6e-3083dd89841d', '2024-04-01'), ('edit_notes_2c0a750c-9cc2-4991-9b39-25854038d1d1', 'ZXZX'), ('edit_date_2c0a750c-9cc2-4991-9b39-25854038d1d1', '2024-07-02'), ('edit_notes_4777a92f-1320-4758-b8f8-590fbc10d7d5', 'As of Apr. 1, 2024, all included plug-ins will be merged into Red Hat Developer Hub and the Plug-ins for Backstage SKU will be retired. Mentions are currently being removing from Red Hat websites, etc.'), ('edit_date_4777a92f-1320-4758-b8f8-590fbc10d7d5', '2024-03-08'), ('submit', 'Save changes')])
+Existing References (SQL Query): [('a14b0aaa-00d9-4e37-bdad-0c145afdc0b4', 'ASDAsAS', 'AsASAS'), ('a14b0aaa-00d9-4e37-bdad-0c145afdc0b4', 'asdfasd', 'asdasd')]
+Reference Forms: [<forms.EditForm object at 0x7f39a77a1d00>, <forms.EditForm object at 0x7f39a77be4e0>]
+Fetching existing ProductMktLife data
+New Aliases Data: {}
+Updated ProductMktLife data: <ProductMktLife a14b0aaa-00d9-4e37-bdad-0c145afdc0b4>
+/home/gtrivedi/git/gitlab/opl-ui/routes/edit_routes.py:338: SAWarning: Identity map already had an identity for (<class 'models.ProductReferences'>, ('a14b0aaa-00d9-4e37-bdad-0c145afdc0b4',), None), replacing it with newly flushed object.   Are there load operations occurring inside of an event handler within the flush? (This warning originated from the Session 'autoflush' process, which was invoked automatically in response to a user-initiated operation.)
+  existing_component_ids = [component.component_id for component in product.components]
