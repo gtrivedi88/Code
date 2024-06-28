@@ -1,5 +1,30 @@
-127.0.0.1 - - [28/Jun/2024 23:58:46] "GET /static/css/assets/fonts/RedHatText/RedHatText-Medium.woff2 HTTP/1.1" 200 -
-127.0.0.1 - - [28/Jun/2024 23:58:46] "GET /static/css/assets/fonts/RedHatDisplay/RedHatDisplay-Bold.woff2 HTTP/1.1" 200 -
-Form validation status: False
-Form validation failed.
-{'alias_type': [<class 'wtforms.validators.Optional'>]}
+class ProductMktLife(db.Model):
+    """
+    Represents marketing life information for a product.
+
+    Attributes:
+    - product_id: Foreign key to Product.
+    - product_release: Release date of the product.
+    - product_release_detail: Details about the product release.
+    - product_release_link: Reference link for the product release.
+    - product_eol: End of Life date of the product.
+    - product_eol_detail: Details about the End of Life of the product.
+    - product_eol_link: Reference link for the End of Life of the product.
+
+    Relationships:
+    - product: Relationship to Product for easy access to the associated product.
+    """
+
+    __tablename__ = 'product_mkt_life'
+    __table_args__ = {'schema': 'brand_opl'}
+
+    product_id = db.Column(db.String, db.ForeignKey('brand_opl.product.product_id'), primary_key=True)
+    product_release = db.Column(db.Date, nullable=True)
+    product_release_detail = db.Column(db.String(255))
+    product_release_link = db.Column(db.String(255))
+    product_eol = db.Column(db.Date, nullable=True)
+    product_eol_detail = db.Column(db.String(255))
+    product_eol_link = db.Column(db.String(255))
+
+    # The relationship to the Product model
+    product = db.relationship('Product', backref=db.backref('mkt_life', lazy='dynamic'))
