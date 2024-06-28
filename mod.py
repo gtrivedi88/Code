@@ -1,59 +1,9 @@
-product_mkt_life = ProductMktLife.query.get_or_404(product_id)
-
-    # Populate the form with existing data
-    if request.method == 'GET':
-        form.product_release.data = product_mkt_life.product_release
-        form.product_release_detail.data = product_mkt_life.product_release_detail
-        form.product_release_link.data = product_mkt_life.product_release_link
-        form.product_eol.data = product_mkt_life.product_eol
-        form.product_eol_detail.data = product_mkt_life.product_eol_detail
-        form.product_eol_link.data = product_mkt_life.product_eol_link
-
-if form.validate_on_submit() or 'submit' in request.form:
-        # Logic for editing the product
-        print("New Aliases Data:", {key: value for key, value in request.form.items() if key.startswith('new_alias_')})
-        form.populate_obj(product)
-        product.last_updated = datetime.now()  # Update last_updated timestamp
-
-
-# Update Product Market Life
-        product_mkt_life.product_release = form.product_release.data
-        product_mkt_life.product_release_detail = form.product_release_detail.data
-        product_mkt_life.product_release_link = form.product_release_link.data
-        product_mkt_life.product_eol = form.product_eol.data
-        product_mkt_life.product_eol_detail = form.product_eol_detail.data
-        product_mkt_life.product_eol_link = form.product_eol_link.data
-
-
-
-
-# Fetch existing ProductMktLife data
-    product_mkt_life = ProductMktLife.query.filter_by(product_id=product.product_id).first()
-    if product_mkt_life:
-        form.product_release.data = product_mkt_life.product_release
-        form.product_release_detail.data = product_mkt_life.product_release_detail
-        form.product_release_link.data = product_mkt_life.product_release_link
-        form.product_eol.data = product_mkt_life.product_eol
-        form.product_eol_detail.data = product_mkt_life.product_eol_detail
-        form.product_eol_link.data = product_mkt_life.product_eol_link
-
-
-if request.method == 'POST':
-        if form.validate_on_submit() or 'submit' in request.form:
-            # Logic for editing the product
-            print("New Aliases Data:", {key: value for key, value in request.form.items() if key.startswith('new_alias_')})
-            form.populate_obj(product)
-            product.last_updated = datetime.now()
-
-# Update Product Mkt Life
-            ProductMktLife.query.filter_by(product_id=product.product_id).delete()
-            product_mkt_life = ProductMktLife(
-                product_id=product.product_id,
-                product_release=form.product_release.data,
-                product_release_detail=form.product_release_detail.data,
-                product_release_link=form.product_release_link.data,
-                product_eol=form.product_eol.data,
-                product_eol_detail=form.product_eol_detail.data,
-                product_eol_link=form.product_eol_link.data
-            )
-            db.session.add(product_mkt_life)
+127.0.0.1 - - [29/Jun/2024 02:26:48] "GET /assets/images/img_avatar-light.svg HTTP/1.1" 404 -
+127.0.0.1 - - [29/Jun/2024 02:26:48] "GET /static/scripts/search.js HTTP/1.1" 304 -
+127.0.0.1 - - [29/Jun/2024 02:26:48] "GET /static/scripts/toggle.js HTTP/1.1" 304 -
+Route accessed with method: GET
+GET request received
+Existing References (SQL Query): [('2f787c28-f9c6-4fe2-97a6-ebd9d0194567', 'https://portfoliohub.redhat.com/v3/serviceskit/automate_rhel_patching_compliance', 'Red Hat Consulting: Automate RHEL Patching & Compliance on Red Hat Services Portfolio Hub')]
+Reference Forms: [<forms.EditForm object at 0x7fe9d24c6bd0>]
+Fetching existing ProductMktLife data
+127.0.0.1 - - [29/Jun/2024 02:26:56] "GET /opl/edit-product/2f787c28-f9c6-4fe2-97a6-ebd9d0194567 HTTP/1.1" 200 -
