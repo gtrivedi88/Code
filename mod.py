@@ -1,16 +1,59 @@
-127.0.0.1 - - [29/Jun/2024 01:45:24] "GET /static/css/patternfly.css HTTP/1.1" 304 -
-127.0.0.1 - - [29/Jun/2024 01:45:24] "GET /static/css/main.css HTTP/1.1" 304 -
-127.0.0.1 - - [29/Jun/2024 01:45:24] "GET /static/css/patternfly-addons.css HTTP/1.1" 304 -
-Route accessed with method: POST
-POST request received
-Form data: ImmutableMultiDict([('csrf_token', 'IjI4NzMwMjMwMGQ5ZDFhNzIxMTMyOTg1Yjk2MTk4MjJhNGQ2MzIwYmYi.Zn8Z0A.PviazNZZW2WmlclaClY8SohMww0'), ('product_name', '3scale Backstage provider '), ('product_type', 'cec70d55-aed5-44c7-a8db-7da271288ebe'), ('product_type', '9324088d-44d6-4ca9-8011-887df6756500'), ('product_description', 'sdasdasdsdasdasdasd'), ('product_portfolio', '569de932-3061-4917-832c-ae75e082feaf'), ('product_portfolio', 'acbfe7c2-7801-41cb-8f8d-70c20ecb9d6c'), ('product_note', 'zxzxasdasd'), ('product_link', 'ASDAsAS'), ('product_link', 'asdfasd'), ('link_description', 'AsASAS'), ('link_description', 'asdasd'), ('deprecated', 'y'), ('upcoming_change', 'y'), ('product_status', 'Deprecated'), ('product_status_detail', 'Null'), ('alias_name_5ada3919-f44e-4e93-a51f-f33ab652c00f', 'Fond'), ('alias_notes_5ada3919-f44e-4e93-a51f-f33ab652c00f', ' sde    asdasdasd   asdasdasdasd            '), ('alias_type_5ada3919-f44e-4e93-a51f-f33ab652c00f', 'Acronym'), ('tech_docs_5ada3919-f44e-4e93-a51f-f33ab652c00f', 'on'), ('alias_name_PLACEHOLDER', ''), ('alias_notes_PLACEHOLDER', ' '), ('alias_type_PLACEHOLDER', 'Short'), ('product_release', '2023-11-06'), ('product_release_detail', 'Technology Preview'), ('product_release_link', 'https://www.redhat.com/en/about/press-releases/red-hat-expands-contribution-backstage-project-new-plug-ins'), ('product_eol', '2024-06-07'), ('product_eol_detail', 'sdasd'), ('product_eol_link', 'asdasdas'), ('partner', '807421dd-1675-40e5-9013-9d4d1532c4b4'), ('partner', 'b9e309da-1ef2-4fb9-a982-c578e7253da9'), ('partner', 'd91c472b-6a7b-4168-9169-d498449dc591'), ('product_id[]', '2fda7302-16fc-4186-b119-6d5c83f8c3c4'), ('product_id[]', ''), ('component_type[]', 'variant'), ('component_type[]', ''), ('existing_log_id', 'bf3bd998-e15f-4ba3-ac6e-3083dd89841d'), ('existing_log_id', '2c0a750c-9cc2-4991-9b39-25854038d1d1'), ('existing_log_id', '4777a92f-1320-4758-b8f8-590fbc10d7d5'), ('edit_notes_bf3bd998-e15f-4ba3-ac6e-3083dd89841d', 'Updated parent product to Red Hat Developer Hub'), ('edit_date_bf3bd998-e15f-4ba3-ac6e-3083dd89841d', '2024-04-01'), ('edit_notes_2c0a750c-9cc2-4991-9b39-25854038d1d1', 'ZXZX'), ('edit_date_2c0a750c-9cc2-4991-9b39-25854038d1d1', '2024-07-02'), ('edit_notes_4777a92f-1320-4758-b8f8-590fbc10d7d5', 'As of Apr. 1, 2024, all included plug-ins will be merged into Red Hat Developer Hub and the Plug-ins for Backstage SKU will be retired. Mentions are currently being removing from Red Hat websites, etc.'), ('edit_date_4777a92f-1320-4758-b8f8-590fbc10d7d5', '2024-03-08'), ('submit', 'Save changes')])
-Existing References (SQL Query): [('a14b0aaa-00d9-4e37-bdad-0c145afdc0b4', 'ASDAsAS', 'AsASAS'), ('a14b0aaa-00d9-4e37-bdad-0c145afdc0b4', 'asdfasd', 'asdasd')]
-Reference Forms: [<forms.EditForm object at 0x7f3a133f2480>, <forms.EditForm object at 0x7f3a133f2300>]
-Fetching existing ProductMktLife data
-New Aliases Data: {}
-Updated ProductMktLife data: {'product_release': datetime.date(2023, 11, 6), 'product_release_detail': 'Technology Preview', 'product_release_link': 'https://www.redhat.com/en/about/press-releases/red-hat-expands-contribution-backstage-project-new-plug-ins', 'product_eol': None, 'product_eol_detail': None, 'product_eol_link': None}
-/home/gtrivedi/git/gitlab/opl-ui/routes/edit_routes.py:345: SAWarning: Identity map already had an identity for (<class 'models.ProductReferences'>, ('a14b0aaa-00d9-4e37-bdad-0c145afdc0b4',), None), replacing it with newly flushed object.   Are there load operations occurring inside of an event handler within the flush? (This warning originated from the Session 'autoflush' process, which was invoked automatically in response to a user-initiated operation.)
-  existing_component_ids = [component.component_id for component in product.components]
-127.0.0.1 - - [29/Jun/2024 01:45:28] "POST /opl/edit-product/a14b0aaa-00d9-4e37-bdad-0c145afdc0b4 HTTP/1.1" 200 -
-127.0.0.1 - - [29/Jun/2024 01:45:28] "GET /static/css/patternfly-addons.css HTTP/1.1" 304 -
-127.0.0.1 - - [29/Jun/2024 01:45:28] "GET /static/css/patternfly.css HTTP/1.1" 304 -
+product_mkt_life = ProductMktLife.query.get_or_404(product_id)
+
+    # Populate the form with existing data
+    if request.method == 'GET':
+        form.product_release.data = product_mkt_life.product_release
+        form.product_release_detail.data = product_mkt_life.product_release_detail
+        form.product_release_link.data = product_mkt_life.product_release_link
+        form.product_eol.data = product_mkt_life.product_eol
+        form.product_eol_detail.data = product_mkt_life.product_eol_detail
+        form.product_eol_link.data = product_mkt_life.product_eol_link
+
+if form.validate_on_submit() or 'submit' in request.form:
+        # Logic for editing the product
+        print("New Aliases Data:", {key: value for key, value in request.form.items() if key.startswith('new_alias_')})
+        form.populate_obj(product)
+        product.last_updated = datetime.now()  # Update last_updated timestamp
+
+
+# Update Product Market Life
+        product_mkt_life.product_release = form.product_release.data
+        product_mkt_life.product_release_detail = form.product_release_detail.data
+        product_mkt_life.product_release_link = form.product_release_link.data
+        product_mkt_life.product_eol = form.product_eol.data
+        product_mkt_life.product_eol_detail = form.product_eol_detail.data
+        product_mkt_life.product_eol_link = form.product_eol_link.data
+
+
+
+
+# Fetch existing ProductMktLife data
+    product_mkt_life = ProductMktLife.query.filter_by(product_id=product.product_id).first()
+    if product_mkt_life:
+        form.product_release.data = product_mkt_life.product_release
+        form.product_release_detail.data = product_mkt_life.product_release_detail
+        form.product_release_link.data = product_mkt_life.product_release_link
+        form.product_eol.data = product_mkt_life.product_eol
+        form.product_eol_detail.data = product_mkt_life.product_eol_detail
+        form.product_eol_link.data = product_mkt_life.product_eol_link
+
+
+if request.method == 'POST':
+        if form.validate_on_submit() or 'submit' in request.form:
+            # Logic for editing the product
+            print("New Aliases Data:", {key: value for key, value in request.form.items() if key.startswith('new_alias_')})
+            form.populate_obj(product)
+            product.last_updated = datetime.now()
+
+# Update Product Mkt Life
+            ProductMktLife.query.filter_by(product_id=product.product_id).delete()
+            product_mkt_life = ProductMktLife(
+                product_id=product.product_id,
+                product_release=form.product_release.data,
+                product_release_detail=form.product_release_detail.data,
+                product_release_link=form.product_release_link.data,
+                product_eol=form.product_eol.data,
+                product_eol_detail=form.product_eol_detail.data,
+                product_eol_link=form.product_eol_link.data
+            )
+            db.session.add(product_mkt_life)
