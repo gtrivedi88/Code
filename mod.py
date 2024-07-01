@@ -1,32 +1,45 @@
-INFO:werkzeug:WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
- * Running on https://127.0.0.1:5000
-INFO:werkzeug:Press CTRL+C to quit
-ERROR:app:Exception on /opl/search-to-view-products [GET]
+File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/projects/app.py", line 10, in <module>
+    from routes.view_routes import view_routes
+  File "/projects/routes/view_routes.py", line 6, in <module>
+    from cache_config import cache
+  File "/projects/cache_config.py", line 1, in <module>
+    from flask_caching import Cache
+ModuleNotFoundError: No module named 'flask_caching'
+[2024-07-01 21:43:52 +0000] [9] [INFO] Worker exiting (pid: 9)
+[2024-07-01 21:43:52 +0000] [1] [ERROR] Worker (pid:8) exited with code 3
 Traceback (most recent call last):
-  File "/home/gtrivedi/.local/lib/python3.12/site-packages/flask_caching/__init__.py", line 392, in decorated_function
-    rv = self.cache.get(cache_key)
-         ^^^^^^^^^^
-  File "/home/gtrivedi/.local/lib/python3.12/site-packages/flask_caching/__init__.py", line 191, in cache
-    return app.extensions["cache"][self]
-           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
-KeyError: <flask_caching.Cache object at 0x7f17d7965c70>
+  File "/opt/app-root/lib64/python3.11/site-packages/gunicorn/arbiter.py", line 209, in run
+    self.sleep()
+  File "/opt/app-root/lib64/python3.11/site-packages/gunicorn/arbiter.py", line 360, in sleep
+    ready = select.select([self.PIPE[0]], [], [], 1.0)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/app-root/lib64/python3.11/site-packages/gunicorn/arbiter.py", line 242, in handle_chld
+    self.reap_workers()
+  File "/opt/app-root/lib64/python3.11/site-packages/gunicorn/arbiter.py", line 530, in reap_workers
+    raise HaltServer(reason, self.WORKER_BOOT_ERROR)
+gunicorn.errors.HaltServer: <HaltServer 'Worker failed to boot.' 3>
 
 During handling of the above exception, another exception occurred:
 
 Traceback (most recent call last):
-  File "/home/gtrivedi/.local/lib/python3.12/site-packages/flask/app.py", line 1455, in wsgi_app
-    response = self.full_dispatch_request()
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/gtrivedi/.local/lib/python3.12/site-packages/flask/app.py", line 869, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/gtrivedi/.local/lib/python3.12/site-packages/flask/app.py", line 867, in full_dispatch_request
-    rv = self.dispatch_request()
-         ^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/gtrivedi/.local/lib/python3.12/site-packages/flask/app.py", line 852, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/gtrivedi/.local/lib/python3.12/site-packages/flask_caching/__init__.py", line 410, in decorated_function
-    if self.app.debug:
-       ^^^^^^^^
-AttributeError: 'Cache' object has no attribute 'app'
+  File "/opt/app-root/bin/gunicorn", line 8, in <module>
+    sys.exit(run())
+             ^^^^^
+  File "/opt/app-root/lib64/python3.11/site-packages/gunicorn/app/wsgiapp.py", line 67, in run
+    WSGIApplication("%(prog)s [OPTIONS] [APP_MODULE]", prog=prog).run()
+  File "/opt/app-root/lib64/python3.11/site-packages/gunicorn/app/base.py", line 236, in run
+    super().run()
+  File "/opt/app-root/lib64/python3.11/site-packages/gunicorn/app/base.py", line 72, in run
+    Arbiter(self).run()
+  File "/opt/app-root/lib64/python3.11/site-packages/gunicorn/arbiter.py", line 229, in run
+    self.halt(reason=inst.reason, exit_status=inst.exit_status)
+  File "/opt/app-root/lib64/python3.11/site-packages/gunicorn/arbiter.py", line 342, in halt
+    self.stop()
+  File "/opt/app-root/lib64/python3.11/site-packages/gunicorn/arbiter.py", line 396, in stop
+    time.sleep(0.1)
+  File "/opt/app-root/lib64/python3.11/site-packages/gunicorn/arbiter.py", line 242, in handle_chld
+    self.reap_workers()
+  File "/opt/app-root/lib64/python3.11/site-packages/gunicorn/arbiter.py", line 530, in reap_workers
+    raise HaltServer(reason, self.WORKER_BOOT_ERROR)
+gunicorn.errors.HaltServer: <HaltServer 'Worker failed to boot.' 3>
