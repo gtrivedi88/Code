@@ -1,151 +1,315 @@
-from flask import Flask, render_template, flash, session, request, redirect, url_for, g, current_app
 from flask_sqlalchemy import SQLAlchemy
-import flask_saml
-import flask_principal
-from forms import MyForm, SearchForm, EditForm
-from datetime import date
-from models import db, Product, ProductType, ProductTypeMap, ProductPortfolios, ProductPortfolioMap, ProductNotes, ProductReferences, ProductAlias, ProductMktLife, ProductPartners, Partner, ProductComponents, ProductLog
-from datetime import datetime
-from routes.view_routes import view_routes
-from routes.add_routes import add_routes
-from routes.edit_routes import edit_routes
-from user_details import user_details
-import os
+import uuid
 
-def determine_greeting():
-    current_hour = datetime.now().hour
-    if 5 <= current_hour < 12:
-        return "Good Morning"
-    elif 12 <= current_hour < 18:
-        return "Good Afternoon"
-    else:
-        return "Good Evening"
+db = SQLAlchemy()
 
-def create_app(test_config=None):
-    app = Flask(__name__)
+class Product(db.Model):
+    """
+    Represents a product in the system.
 
-    principals = flask_principal.Principal(app)
+    Attributes:
+    - product_id: Unique identifier for the product, generated using UUID.
+    - product_name: Name of the product.
+    - product_description: Description of the product.
+    - upcoming_change: Indicates if there is an upcoming change for the product.
+    - deprecated: Indicates if the product is deprecated.
+    - product_status: Status of the product.
+    - last_updated: Date when the product was last updated.
+    - created: Date when the product was created.
+    - product_status_detail: Additional details about the product status.
+    """
 
-    app.config['SECRET_KEY'] = 'Dev'
-    app.config['SAML_METADATA_URL'] = os.environ["SAML_METADATA_URL"]
-    app.config['SAML_DEFAULT_REDIRECT'] = '/'
+    __tablename__ = 'product'
+    __table_args__ = {'schema': 'brand_opl'}
 
-    # Config settings taken from environment variables
-    db_driver = os.environ["DBDRIVER"]
-    pg_user = os.environ["PGUSER"]
-    pg_pass = os.environ["PGPASS"]
-    pg_host = os.environ["PGHOST"]
-    pg_port = os.environ["PGPORT"]
-    pg_db = os.environ["PGDB"]
-    app.config['SQLALCHEMY_DATABASE_URI'] = "%s://%s:%s@%s:%s/%s" % (db_driver, pg_user, pg_pass, pg_host, pg_port, pg_db)
-    if "REDSHIFT_SSL" in os.environ and os.environ["REDSHIFT_SSL"] == "True":
-        app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'connect_args': {'ssl': True, 'sslmode': 'verify_ca'}}
+    product_id = db.Column(db.String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    product_name = db.Column(db.String(255), nullable=False)
+    product_description = db.Column(db.String)
+    upcoming_change = db.Column(db.Boolean)
+    deprecated = db.Column(db.Boolean)
+    product_status = db.Column(db.String(255))
+    last_updated = db.Column(db.Date)
+    created = db.Column(db.Date)
+    product_status_detail = db.Column(db.String(255))
 
-    # Initialize the database
-    db.init_app(app)
+    # Relationships
+    components = db.relationship('ProductComponents', back_populates='child_product', foreign_keys='[ProductComponents.component_id]')
+    composed_of = db.relationship('ProductComponents', back_populates='parent_product', foreign_keys='[ProductComponents.product_id]')
 
-    # Removing the db.create_all because:
-    # a) we already have a pre-existing db
-    # b) this is causing an error when connecting to the real db
-    #
-    # with app.app_context():
-    #    db.create_all()
+class ProductType(db.Model):
+    """
+    Represents different types of products.
 
-    flask_saml.FlaskSAML(app)
+    Attributes:
+    - type_id: Unique identifier for the product type.
+    - product_type: Type of the product.
+    """
 
-    # Actions to perform when a user logs in
-    @flask_saml.saml_authenticated.connect_via(app)
-    def on_saml_authenticated(sender, subject, attributes, auth):
-        # We have a logged in user, inform Flask-Principal
-        flask_principal.identity_changed.send(
-            current_app._get_current_object(), identity=get_identity())
+    __tablename__ = 'product_types'
+    __table_args__ = {'schema': 'brand_opl'}
 
-    # Actions to perform when a user logs out
-    @flask_saml.saml_log_out.connect_via(app)
-    def on_saml_logout(sender):
-        # Let Flask-Principal know the user is gone
-        flask_principal.identity_changed.send(
-            current_app._get_current_object(), identity=get_identity())
+    type_id = db.Column(db.String, primary_key=True)
+    product_type = db.Column(db.String(255), nullable=False)
 
-    # Set the user identity for the application
-    @principals.identity_loader
-    def get_identity():
-        if 'saml' in session:
-            return flask_principal.Identity(session['saml']['subject'])
-        else:
-            return flask_principal.AnonymousIdentity()
+    # Relationships
+    product_types_map = db.relationship('ProductTypeMap', back_populates='product_type')
 
-    # Actions to perform after setting the user identity
-    @flask_principal.identity_loaded.connect_via(app)
-    def on_identity_loaded(sender, identity):
-        # Define the permission need for all users
-        identity.provides.add(
-            flask_principal.TypeNeed("all")
-        )
-        if not isinstance(identity, flask_principal.AnonymousIdentity):
-            # Define the permission need for the user's roles
-            if "Role" in session['saml']['attributes'].keys():
-                for role in session['saml']['attributes']['Role']:
-                    identity.provides.add(
-                        flask_principal.RoleNeed(role)
-                    )
-            # Define the permission need for the user's groups
-            if "group" in session['saml']['attributes'].keys():
-                for group in session['saml']['attributes']['group']:
-                    identity.provides.add(
-                        flask_principal.Need('group', group)
-                    )
-            # Define the permission need for an authenticated user
-            identity.provides.add(
-                flask_principal.TypeNeed("authenticated")
-            )
-        else:
-            # Define the permission need for an anonymous user
-            identity.provides.add(
-                flask_principal.TypeNeed("anonymous")
-            )
+class ProductTypeMap(db.Model):
+    """
+    Represents a many-to-many relationship between Product and ProductType.
 
-    # Set the variable for the username, which we use in our masthead for an
-    # authenticated user.
-    @app.context_processor
-    def get_current_user():
-        needs={}
-        for need in g.identity.provides:
-            if need.method not in needs:
-                needs[need.method]=[]
-            needs[need.method].append(need.value)
-        return dict(user=g.identity.id, needs=needs)
+    Attributes:
+    - product_id: Foreign key to Product.
+    - type_id: Foreign key to ProductType.
+    """
 
-    # If a user does not have access to a particular resource, send them
-    # to our 403 page.
-    @app.errorhandler(flask_principal.PermissionDenied)
-    def handle_permission_denied(error):
-        return render_template('403.html'), 403
+    __tablename__ = 'product_types_map'
+    __table_args__ = {'schema': 'brand_opl'}
 
-    # handle 404 errors
-    @app.errorhandler(404)
-    def page_not_found(error):
-        return render_template('404.html'), 404
+    product_id = db.Column(db.String, db.ForeignKey('brand_opl.product.product_id'),primary_key=True)
+    type_id = db.Column(db.String, db.ForeignKey('brand_opl.product_types.type_id'), primary_key=True)
 
-    @app.route("/")
-    def home():
-        greeting = determine_greeting()
-        if 'saml' in session and 'firstName' in session['saml']['attributes']:
-            first_name = session['saml']['attributes']['firstName'][0]
-        else:
-            first_name = "anonymous user"
-        return render_template("index.html", greeting=greeting, first_name=first_name)
+    # Relationships
+    product_type = db.relationship('ProductType', back_populates='product_types_map')
 
-    # The route definition to view a product.
-    app.register_blueprint(view_routes)
+class ProductPortfolios(db.Model):
+    """
+    Represents different portfolios for products.
 
-    # The route definition to add a product.
-    app.register_blueprint(add_routes)
+    Attributes:
+    - category_id: Unique identifier for the product portfolio.
+    - category_name: Name of the product portfolio.
+    """
 
-    # The route definition to edit a product.
-    app.register_blueprint(edit_routes)
+    __tablename__ = 'product_portfolios'
+    __table_args__ = {'schema': 'brand_opl'}
+    __uuid__ = "category_id"
+    __term__ = "category_name"
 
-    app.register_blueprint(user_details)
+    category_id = db.Column(db.String, primary_key=True)
+    category_name = db.Column(db.String(255), nullable=False)
 
-    # Run the application.
-    return app
+    # Relationships
+    product_portfolio_map = db.relationship('ProductPortfolioMap', backref='product_portfolio', lazy='dynamic')
+
+class ProductPortfolioMap(db.Model):
+    """
+    Represents a many-to-many relationship between Product and ProductPortfolios.
+
+    Attributes:
+    - product_id: Foreign key to Product.
+    - category_id: Foreign key to ProductPortfolios.
+    """
+
+    __tablename__ = 'product_portfolio_map'
+    __table_args__ = {'schema': 'brand_opl'}
+    __uuid__ = "product_id"
+    __term__ = "category_id"
+
+    product_id = db.Column(db.String, db.ForeignKey('brand_opl.product.product_id'), primary_key=True)
+    category_id = db.Column(db.String, db.ForeignKey('brand_opl.product_portfolios.category_id'), primary_key=True)
+
+class ProductNotes(db.Model):
+    """
+    Represents notes associated with a product.
+
+    Attributes:
+    - product_id: Foreign key to Product.
+    - product_note: Note associated with the product.
+    """
+
+    __tablename__ = 'product_notes'
+    __table_args__ = {'schema': 'brand_opl'}
+
+
+    product_id = db.Column(db.String, db.ForeignKey('brand_opl.product.product_id'), primary_key=True)
+    product_note = db.Column(db.String(65535), nullable=False)
+
+    # The relationship to the Product model
+    product = db.relationship('Product', backref=db.backref('product_notes', lazy='dynamic'))
+
+
+
+class ProductReferences(db.Model):
+    """
+    Represents references associated with a product.
+
+    Attributes:
+    - product_id: Foreign key to Product.
+    - product_link: Link associated with the product reference.
+    - link_description: Description associated with the product reference.
+
+    Relationships:
+    - product: Relationship to Product for easy access to the associated product references.
+    """
+
+    __tablename__ = 'product_references'
+    __table_args__ = {'schema': 'brand_opl'}
+    __uuid__ = "product_id"
+    __term__ = "product_link"
+
+    product_id = db.Column(db.String, db.ForeignKey('brand_opl.product.product_id'), primary_key=True)
+    product_link = db.Column(db.String(65535), nullable=False)
+    link_description = db.Column(db.String(65535), nullable=False)
+
+    # The relationship to the Product model
+    product = db.relationship('Product', backref=db.backref('product_references', lazy='dynamic'))
+
+
+class ProductAlias(db.Model):
+    """
+    Represents aliases associated with a product.
+
+    Attributes:
+    - alias_id: Unique identifier for the alias.
+    - product_id: Foreign key to Product.
+    - alias_name: Name associated with the alias.
+    - alias_type: Type of the alias (Short, Acronym, Cli, Former).
+    - alias_approved: Indicates if the alias is approved.
+    - previous_name: Indicates if the alias is a previous name.
+    - tech_docs: Indicates if the alias is approved for tech docs.
+    - tech_docs_cli: Indicates if the alias is approved for tech docs code/CLI.
+    - alias_notes: Notes associated with the alias.
+
+    Relationships:
+    - product: Relationship to Product for easy access to the associated product.
+    """
+
+    __tablename__ = 'product_alias'
+    __table_args__ = {'schema': 'brand_opl'}
+    __uuid__ = "alias_id"
+    __term__ = "alias_name"
+
+    alias_id = db.Column(db.String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    product_id = db.Column(db.String, db.ForeignKey('brand_opl.product.product_id'), nullable=False)
+    alias_name = db.Column(db.String(255), nullable=False)
+    alias_type = db.Column(db.String(255), nullable=False)
+    alias_approved = db.Column(db.Boolean, nullable=True)
+    previous_name = db.Column(db.Boolean, nullable=True)
+    tech_docs = db.Column(db.Boolean, nullable=True)
+    tech_docs_cli = db.Column(db.Boolean, nullable=True)
+    alias_notes = db.Column(db.String(65535))
+
+    # The relationship to the Product model
+    product = db.relationship('Product', backref=db.backref('aliases', lazy='dynamic'))
+
+
+class ProductMktLife(db.Model):
+    """
+    Represents marketing life information for a product.
+
+    Attributes:
+    - product_id: Foreign key to Product.
+    - product_release: Release date of the product.
+    - product_release_detail: Details about the product release.
+    - product_release_link: Reference link for the product release.
+    - product_eol: End of Life date of the product.
+    - product_eol_detail: Details about the End of Life of the product.
+    - product_eol_link: Reference link for the End of Life of the product.
+
+    Relationships:
+    - product: Relationship to Product for easy access to the associated product.
+    """
+
+    __tablename__ = 'product_mkt_life'
+    __table_args__ = {'schema': 'brand_opl'}
+
+    product_id = db.Column(db.String, db.ForeignKey('brand_opl.product.product_id'), primary_key=True)
+    product_release = db.Column(db.Date, nullable=True)
+    product_release_detail = db.Column(db.String(255))
+    product_release_link = db.Column(db.String(255))
+    product_eol = db.Column(db.Date, nullable=True)
+    product_eol_detail = db.Column(db.String(255))
+    product_eol_link = db.Column(db.String(255))
+
+    # The relationship to the Product model
+    product = db.relationship('Product', backref=db.backref('mkt_life', lazy='dynamic'))
+
+
+class Partner(db.Model):
+    """
+    Represents partners.
+
+    Attributes:
+    - partner_id: Unique identifier for the partner.
+    - partner_name: Name of the partner.
+    - persona_id: Persona ID for the partner.
+    """
+
+    __tablename__ = 'partners'
+    __table_args__ = {'schema': 'brand_opl'}
+    __uuid__ = "partner_id"
+    __term__ = "partner_name"
+
+    partner_id = db.Column(db.String, primary_key=True)
+    partner_name = db.Column(db.String(255), nullable=False)
+
+    # Relationships
+    product_partners = db.relationship('ProductPartners', backref='partner', lazy='dynamic')
+
+class ProductPartners(db.Model):
+    """
+    Represents a many-to-many relationship between Product and Partners.
+
+    Attributes:
+    - product_id: Foreign key to Product.
+    - partner_id: Foreign key to Partners.
+    """
+
+    __tablename__ = 'product_partners'
+    __table_args__ = {'schema': 'brand_opl'}
+    __uuid__ = "product_id"
+    __term__ = "partner_id"
+
+    product_id = db.Column(db.String, db.ForeignKey('brand_opl.product.product_id'), primary_key=True)
+    partner_id = db.Column(db.String, db.ForeignKey('brand_opl.partners.partner_id'), primary_key=True)
+
+
+class ProductComponents(db.Model):
+    """
+    Represents a many-to-many relationship between Product and Components.
+
+    Attributes:
+    - product_id: Foreign key to Product.
+    - component_id: Foreign key to Components.
+    """
+
+    __tablename__ = 'product_components'
+    __table_args__ = {'schema': 'brand_opl'}
+    __uuid__ = "product_id"
+    __term__ = "component_id"
+
+    component_id = db.Column(db.String, db.ForeignKey('brand_opl.product.product_id'), primary_key=True)
+    product_id = db.Column(db.String, db.ForeignKey('brand_opl.product.product_id'), primary_key=True)
+    component_type = db.Column(db.String(255), nullable=False)
+
+    # Relationship back_populates
+    child_product = db.relationship('Product', foreign_keys=[component_id], back_populates='components')
+    parent_product = db.relationship('Product', foreign_keys=[product_id], back_populates='composed_of')
+
+
+class ProductLog(db.Model):
+    """
+    Represents a log of changes made to a product.
+
+    Attributes:
+    - log_id: Unique identifier for the log entry.
+    - product_id: Foreign key to Product.
+    - edit_date: Date when the edit was made.
+    - edit_notes: Notes associated with the edit.
+    - username: Username of the user who made the edit.
+    """
+
+    __tablename__ = 'product_log'
+    __table_args__ = {'schema': 'brand_opl'}
+    __uuid__ = "product_id"
+    __term__ = "edit_date"
+
+    log_id = db.Column(db.String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    product_id = db.Column(db.String, db.ForeignKey('brand_opl.product.product_id'), primary_key=True)
+    edit_date = db.Column(db.Date, nullable=False)
+    edit_notes = db.Column(db.String(65535), nullable=True)
+    username = db.Column(db.String(255), nullable=False)
+
+    # Define the relationship to the Product model
+    product = db.relationship('Product', backref=db.backref('ProductLog', lazy='dynamic'))
